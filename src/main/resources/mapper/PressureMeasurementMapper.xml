@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hitices.pressure.repository.PressureMeasurementMapper">
+    <resultMap id="TestPlanResultMap" type="com.hitices.pressure.entity.TestPlanVO">
+        <id property="id" column="id"/>
+        <result property="comment" column="comment"/>
+        <result property="testPlanName" column="test_plan_name"/>
+        <result property="serialized" column="serialized"/>
+        <result property="functionalMode" column="functional_mode"/>
+        <result property="tearDown" column="tear_down"/>
+        <result property="status" column="status"/>
+        <collection property="threadGroupList" column="{testPlanId = id}" javaType="List"
+                    ofType="com.hitices.pressure.entity.ThreadGroupVO" select="getThreadGroupsByTestPlanId"/>
+    </resultMap>
+    <resultMap id="ThreadGroupResultMap" type="com.hitices.pressure.entity.ThreadGroupVO">
+        <id property="id" column="id"/>
+        <result property="threadGroupName" column="thread_group_name"/>
+        <result property="comment" column="comment"/>
+        <result property="testPlanId" column="test_plan_id"/>
+        <result property="threadNum" column="thread_num"/>
+        <result property="rampUp" column="ramp_up"/>
+        <result property="scheduler" column="scheduler"/>
+        <result property="duration" column="duration"/>
+        <result property="delay" column="delay"/>
+        <association property="loopControllerVO" column="{threadGroupId = id}"
+                     select="getLoopControllerByThreadGroupId"/>
+        <association property="cookieManagerVO" column="{threadGroupId = id}" select="getCookieManagerByThreadGroupId"/>
+        <association property="headerManagerVO" column="{threadGroupId = id}" select="getHeaderManagerByThreadGroupId"/>
+        <association property="httpSamplerProxyVO" column="{threadGroupId=id}"
+                     select="getHTTPSamplerProxyByThreadGroupId"/>
+    </resultMap>
+    <resultMap id="HTTPSamplerProxyResultMap" type="com.hitices.pressure.entity.HTTPSamplerProxyVO">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="comment" column="comment"/>
+        <result property="protocol" column="protocol"/>
+        <result property="server" column="server"/>
+        <result property="path" column="path"/>
+        <result property="port" column="port"/>
+        <result property="method" column="method"/>
+        <result property="argumentsString" column="arguments"/>
+        <result property="autoRedirects" column="auto_redirects"/>
+        <result property="followRedirects" column="follow_redirects"/>
+        <result property="body" column="body"/>
+        <result property="contentEncoding" column="content_encoding"/>
+        <result property="useKeepAlive" column="use_keep_alive"/>
+        <result property="threadGroupId" column="thread_group_id"/>
+        <result property="body" column="body"/>
+    </resultMap>
+    <resultMap id="HeaderManagerResultMap" type="com.hitices.pressure.entity.HeaderManagerVO">
+        <id property="id" column="id"/>
+        <result property="threadGroupId" column="thread_group_id"/>
+        <result property="headerManagerName" column="header_manager_name"/>
+        <result property="comment" column="comment"/>
+        <result property="headerListString" column="headers"/>
+    </resultMap>
+    <resultMap id="CookieManagerResultMap" type="com.hitices.pressure.entity.CookieManagerVO">
+        <id property="id" column="id"/>
+        <result property="cookieManagerName" column="cookie_manager_name"/>
+        <result property="comment" column="comment"/>
+        <result property="cookiesString" column="cookies"/>
+        <result property="clearEachIteration" column="clear_each_iteration"/>
+        <result property="threadGroupId" column="thread_group_id"/>
+    </resultMap>
+    <resultMap id="LoopControllerResultMap" type="com.hitices.pressure.entity.LoopControllerVO">
+        <id property="id" column="id"/>
+        <result property="loopControllerName" column="loop_controller_name"/>
+        <result property="comment" column="comment"/>
+        <result property="loopNum" column="loop_num"/>
+        <result property="continueForever" column="continue_forever"/>
+        <result property="threadGroupId" column="thread_group_id"/>
+    </resultMap>
+    <resultMap id="TimerResultMap" type="com.hitices.pressure.entity.ConstantTimerVO">
+        <id property="id" column="id"/>
+        <result property="timerType" column="type"/>
+        <result property="threadGroupId" column="thread_group_id"/>
+    </resultMap>
+    <select id="getAllTestPlans" resultMap="TestPlanResultMap">
+        select *
+        from test_plan
+    </select>
+    <select id="getTestPlanById" resultMap="TestPlanResultMap">
+        select *
+        from test_plan
+        where id = #{id}
+    </select>
+    <select id="getHTTPSamplerProxyByThreadGroupId" resultMap="HTTPSamplerProxyResultMap">
+        select *
+        from http_sampler_proxy
+        where thread_group_id = #{threadGroupId}
+    </select>
+
+    <select id="getHeaderManagerByThreadGroupId" resultMap="HeaderManagerResultMap">
+        select *
+        from header_manager
+        where thread_group_id = #{threadGroupId}
+    </select>
+    <select id="getLoopControllerByThreadGroupId" resultMap="LoopControllerResultMap">
+        select *
+        from loop_controller
+        where thread_group_id = #{threadGroupId}
+    </select>
+    <select id="getCookieManagerByThreadGroupId" resultMap="CookieManagerResultMap">
+        select *
+        from cookie_manager
+        where thread_group_id = #{threadGroupId}
+    </select>
+
+    <select id="getTimersByThreadGroupId" resultMap="TimerResultMap">
+        select *
+        from timer
+        where thread_group_id = #{threadGroupId}
+    </select>
+    <select id="getConstantTimerById" resultType="com.hitices.pressure.entity.ConstantTimerVO">
+        select *
+        from constant_timer
+        where id = #{id}
+    </select>
+    <select id="getGaussianRandomTimerById" resultType="com.hitices.pressure.entity.GaussianRandomTimerVO">
+        select *
+        from gaussian_random_timer
+        where id = #{id}
+    </select>
+    <select id="getUniformRandomTimerById" resultType="com.hitices.pressure.entity.UniformRandomTimerVO">
+        select *
+        from uniform_random_timer
+        where id = #{id}
+    </select>
+    <select id="getPoissonRandomTimerById" resultType="com.hitices.pressure.entity.PoissonRandomTimerVO">
+        select *
+        from poisson_random_timer
+        where id = #{id}
+    </select>
+    <select id="getThreadGroupsByTestPlanId" resultMap="ThreadGroupResultMap">
+        select *
+        from thread_group
+        where test_plan_id = #{testPlanId};
+    </select>
+
+    <insert id="insertTestPlan" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="com.hitices.pressure.entity.TestPlanVO">
+        insert into test_plan value (null, #{testPlanName}, #{comment}, #{serialized},
+                                     #{functionalMode}, #{tearDown}, #{status})
+    </insert>
+    <insert id="insertThreadGroups" useGeneratedKeys="true" keyProperty="id">
+        insert into thread_group values
+        <foreach collection="threadGroups" item="threadGroup" separator=",">
+            (null,#{threadGroup.testPlanId},#{threadGroup.threadGroupName},#{threadGroup.comment},
+            #{threadGroup.threadNum},#{threadGroup.rampUp},#{threadGroup.delay},
+            #{threadGroup.scheduler},#{threadGroup.duration})
+        </foreach>
+    </insert>
+    <insert id="insertHTTPSamplerProxyList" useGeneratedKeys="true" keyProperty="id">
+        insert into http_sampler_proxy values
+        <foreach collection="httpSamplerProxyList" item="httpSamplerProxy" separator=",">
+            (null,#{httpSamplerProxy.name},#{httpSamplerProxy.comment},#{httpSamplerProxy.protocol},
+            #{httpSamplerProxy.server}, #{httpSamplerProxy.path},#{httpSamplerProxy.port},#{httpSamplerProxy.method},
+            #{httpSamplerProxy.contentEncoding}, #{httpSamplerProxy.useKeepAlive},#{httpSamplerProxy.followRedirects},
+            #{httpSamplerProxy.autoRedirects},#{httpSamplerProxy.argumentsString},#{httpSamplerProxy.threadGroupId},
+            #{httpSamplerProxy.body})
+        </foreach>
+    </insert>
+    <insert id="insertHeaderManagerList" useGeneratedKeys="true" keyProperty="id">
+        insert into header_manager values
+        <foreach collection="headerManagerList" item="headerManager" separator=",">
+            (null, #{headerManager.headerManagerName},
+            #{headerManager.comment},#{headerManager.headerListString},#{headerManager.threadGroupId})
+        </foreach>
+    </insert>
+    <insert id="insertCookieManagerList" useGeneratedKeys="true" keyProperty="id">
+        insert into cookie_manager (id, cookie_manager_name, comment, cookies, clear_each_iteration, thread_group_id)
+        values
+        <foreach collection="cookieManagerList" item="cookieManager" separator=",">
+            (null, #{cookieManager.cookieManagerName}, #{cookieManager.comment}, #{cookieManager.cookiesString},
+            #{cookieManager.clearEachIteration}, #{cookieManager.threadGroupId})
+        </foreach>
+    </insert>
+    <insert id="insertLoopController" useGeneratedKeys="true" keyProperty="id">
+        insert into loop_controller
+            VALUE (null, #{loopControllerName}, #{comment}, #{loopNum}, #{continueForever}, #{threadGroupId})
+    </insert>
+    <insert id="insertConstantTimerList" useGeneratedKeys="true" keyProperty="id">
+        insert into constant_timer values
+        <foreach collection="constantTimerList" item="constantTimer" separator=",">
+            (#{constantTimer.id},#{constantTimer.timerName},#{constantTimer.comment},#{constantTimer.threadDelay})
+        </foreach>
+    </insert>
+    <insert id="insertGaussianRandomTimerList" useGeneratedKeys="true" keyProperty="id">
+        insert into gaussian_random_timer (id, timer_name, comment, deviation, constant_delay_offset) VALUES
+        <foreach collection="gaussianRandomTimerList" item="gaussianRandomTimer" separator=",">
+            (#{gaussianRandomTimer.id},#{gaussianRandomTimer.timerName},#{gaussianRandomTimer.comment},
+            #{gaussianRandomTimer.deviation},#{gaussianRandomTimer.constantDelayOffset})
+        </foreach>
+    </insert>
+    <insert id="insertPoissonRandomTimerList" useGeneratedKeys="true" keyProperty="id">
+        insert into poisson_random_timer (id, timer_name, comment, lambda, constant_delay_offset) VALUES
+        <foreach collection="poissonRandomTimerList" item="poissonRandomTimer" separator=",">
+            (#{poissonRandomTimer.id},#{poissonRandomTimer.timerName},#{poissonRandomTimer.comment},
+            #{poissonRandomTimer.lambda},#{poissonRandomTimer.constantDelayOffset})
+        </foreach>
+    </insert>
+    <insert id="insertUniformRandomTimerList" useGeneratedKeys="true" keyProperty="id">
+        insert into uniform_random_timer (id, timer_name, comment, random_delay_maximum, constant_delay_offset) VALUES
+        <foreach collection="uniformRandomTimerList" item="uniformRandomTimer" separator=",">
+            (#{uniformRandomTimer.id},#{uniformRandomTimer.timerName},#{uniformRandomTimer.commnent},
+            #{uniformRandomTimer.randomDelayMaxium},#{uniformRandomTimer.constantDelayOffset})
+        </foreach>
+    </insert>
+    <insert id="insertTimers" useGeneratedKeys="true" keyProperty="id">
+        insert into timer (id, type, thread_group_id) values
+        <foreach collection="timers" item="timer" separator=",">
+            (null, #{timer.timerType},#{timer.threadGroupId})
+        </foreach>
+    </insert>
+    <delete id="deleteTestPlan">
+        delete
+        from test_plan
+        where id = #{testPlanId}
+    </delete>
+    <delete id="deleteThreadGroup">
+        delete
+        from thread_group
+        where id = #{threadGroupId}
+    </delete>
+    <delete id="deleteThreadGroupByTestPlanId">
+        delete
+        from thread_group
+        where test_plan_id = #{testPlanId};
+    </delete>
+    <update id="updateTestPlan" parameterType="com.hitices.pressure.entity.TestPlanVO" keyColumn="id" keyProperty="id">
+        update test_plan
+        set test_plan_name  = #{testPlanName},
+            comment         = #{comment},
+            serialized      = #{serialized},
+            functional_mode = #{functionalMode},
+            tear_down       = #{tearDown},
+            status          = #{status}
+        where id = #{id}
+
+    </update>
+</mapper>

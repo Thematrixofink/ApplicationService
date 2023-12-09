@@ -1,0 +1,31 @@
+server:
+  port: 8848
+spring:
+  application:
+    name: PressureMeasureService
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/pressure_measure?serverTimezone=GMT%2B8&useSSL=true
+    username: root
+    password: root
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.hitices.pressure.repository
+  configuration:
+    map-underscore-to-camel-case: true
+
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    com.hitices.pressure.common.service-url:
+#      defaultZone: http://${REGISTRY_IP:localhost}:${REGISTRY_PORT:8761}/eureka
+#
+#KubeSphereConfig:
+#  url: ${KUBESPHERE_URL:http://192.168.1.104:30880}
+#  username: ${KUBESPHERE_USERANME:admin}
+#  password: ${KUBESPHERE_PASSWORD:Admin000123}
+
