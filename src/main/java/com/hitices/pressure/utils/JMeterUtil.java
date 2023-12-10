@@ -37,9 +37,9 @@ import java.util.Map;
 
 public class JMeterUtil {
 
-    public static StandardJMeterEngine init(String JMeterHome) {
+    public static StandardJMeterEngine init(String JMeterHome, String filePath) {
 
-        File jmeterPropertiesFile = new File(JMeterHome + "bin\\jmeter.properties");
+        File jmeterPropertiesFile = new File(filePath);
         if (!jmeterPropertiesFile.exists()) return null;
 
         JMeterUtils.loadJMeterProperties(jmeterPropertiesFile.getPath());

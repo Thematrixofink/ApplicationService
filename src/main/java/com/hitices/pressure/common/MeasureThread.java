@@ -17,16 +17,25 @@ public class MeasureThread implements Runnable {
 
     private final TestPlanVO testPlanVO;
 
+    private String system;
+
     private final PressureMeasurementService pressureMeasurementService;
 
     public MeasureThread(TestPlanVO testPlanVO, PressureMeasurementService pressureMeasurementService) {
         this.testPlanVO = testPlanVO;
         this.pressureMeasurementService = pressureMeasurementService;
+        this.system = System.getProperty("os.name");
     }
 
     @Override
     public void run() {
-        StandardJMeterEngine standardJMeterEngine = JMeterUtil.init("C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\");
+        StandardJMeterEngine standardJMeterEngine;
+        if(this.system.equals("Windows 11")) {
+            standardJMeterEngine = JMeterUtil.init("C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\","C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\bin\\jmeter.properties");
+        } else {
+            standardJMeterEngine = JMeterUtil.init("/opt/jmeter/","/opt/jmeter/bin/jmeter.properties");
+        }
+
         if (standardJMeterEngine != null) {
 
             //创建测试计划
