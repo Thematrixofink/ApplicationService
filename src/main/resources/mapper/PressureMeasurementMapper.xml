@@ -159,7 +159,7 @@
     <select id="getTestResultsByPlanId" resultMap="TestResultMap">
         select *
         from test_result
-        where plan_id = #{testPlanId};
+        where plan_id = #{planId};
     </select>
 
     <insert id="insertTestPlan" useGeneratedKeys="true" keyProperty="id" keyColumn="id"

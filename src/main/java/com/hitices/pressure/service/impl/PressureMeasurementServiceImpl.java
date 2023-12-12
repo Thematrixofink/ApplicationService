@@ -176,6 +176,12 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
         return pressureMeasurementMapper.insertTestResult(testResultVO);
     }
 
+    public List<TestResultVO> getTestResultsByPlanId(int planId) {
+        return pressureMeasurementMapper.getTestResultsByPlanId(planId);
+    }
+
+
+
     private void saveThreadGroups(List<ThreadGroupVO> threadGroupVOList) {
 
         pressureMeasurementMapper.insertThreadGroups(threadGroupVOList);

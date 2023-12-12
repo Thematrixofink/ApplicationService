@@ -78,7 +78,6 @@ public class PressureMeasurementController {
 
     @GetMapping("/getTestResultsByID")
     public MResponse<List<TestResultVO>> getTestResultsById(int testPlanId) {
-        
-        return new MResponse<List<TestResultVO>>().successMResponse();
+        return new MResponse<List<TestResultVO>>().successMResponse().data(pressureMeasurementService.getTestResultsByPlanId(testPlanId));
     }
 }
