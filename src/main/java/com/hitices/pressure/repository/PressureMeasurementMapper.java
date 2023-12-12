@@ -64,4 +64,6 @@ public interface PressureMeasurementMapper {
     int insertTestResult(TestResultVO testResultVO);
 
     void updateTestPlan(TestPlanVO testPlan);
+
+    List<TestResultVO> getTestResultsByPlanId(@Param("testPlanId") int testPlanId);
 }

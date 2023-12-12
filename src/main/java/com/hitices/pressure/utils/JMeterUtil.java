@@ -176,9 +176,9 @@ public class JMeterUtil {
         return headerManager;
     }
 
-    public static ResultCollector createResultCollector(PressureMeasurementService service) {
+    public static ResultCollector createResultCollector(PressureMeasurementService service, int planId) {
         Summariser summer = new Summariser();
-        MyResultCollector resultCollector = new MyResultCollector(summer);
+        MyResultCollector resultCollector = new MyResultCollector(summer, planId);
         resultCollector.setName("collector");
         resultCollector.setPressureMeasurementService(service);
         resultCollector.setProperty(TestElement.TEST_CLASS, ResultCollector.class.getName());

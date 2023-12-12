@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class TestResultVO {
     private int id;
-    private int httpSamplerProxyId;
+    private int planId;
     private Date timestamp;
     private Date startTime;
     private Date endTime;

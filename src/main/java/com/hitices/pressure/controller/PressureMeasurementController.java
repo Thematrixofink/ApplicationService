@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hitices.pressure.common.MResponse;
 import com.hitices.pressure.entity.TestPlanVO;
+import com.hitices.pressure.entity.TestResultVO;
 import com.hitices.pressure.service.PressureMeasurementService;
 import org.apache.jmeter.samplers.SampleResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +74,11 @@ public class PressureMeasurementController {
     public MResponse<Object> updateTestPlan(@RequestBody TestPlanVO testPlanVO){
         pressureMeasurementService.updateTestPlan(testPlanVO);
         return new MResponse<>().successMResponse();
+    }
+
+    @GetMapping("/getTestResultsByID")
+    public MResponse<List<TestResultVO>> getTestResultsById(int testPlanId) {
+        
+        return new MResponse<List<TestResultVO>>().successMResponse();
     }
 }

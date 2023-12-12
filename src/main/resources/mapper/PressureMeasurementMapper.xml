@@ -29,6 +29,25 @@
         <association property="httpSamplerProxyVO" column="{threadGroupId=id}"
                      select="getHTTPSamplerProxyByThreadGroupId"/>
     </resultMap>
+    <resultMap id="TestResultMap" type="com.hitices.pressure.entity.TestResultVO">
+        <id property="id" column="id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="timestamp" column="timestamp"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="idleTime" column="idle_time"/>
+        <result property="pauseTime" column="pause_time"/>
+        <result property="connectTime" column="connect_time"/>
+        <result property="latency" column="delay"/>
+        <result property="responseCode" column="response_code"/>
+        <result property="responseData" column="response_data"/>
+        <result property="responseMessage" column="response_message"/>
+        <result property="responseHeaders" column="response_headers"/>
+        <result property="bytes" column="bytes"/>
+        <result property="headersSize" column="headers_size"/>
+        <result property="bodySize" column="body_size"/>
+        <result property="sentBytes" column="sent_bytes"/>
+    </resultMap>
     <resultMap id="HTTPSamplerProxyResultMap" type="com.hitices.pressure.entity.HTTPSamplerProxyVO">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
@@ -75,6 +94,7 @@
         <result property="timerType" column="type"/>
         <result property="threadGroupId" column="thread_group_id"/>
     </resultMap>
+
     <select id="getAllTestPlans" resultMap="TestPlanResultMap">
         select *
         from test_plan
@@ -136,6 +156,11 @@
         from thread_group
         where test_plan_id = #{testPlanId};
     </select>
+    <select id="getTestResultsByPlanId" resultMap="TestResultMap">
+        select *
+        from test_result
+        where plan_id = #{testPlanId};
+    </select>
 
     <insert id="insertTestPlan" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
             parameterType="com.hitices.pressure.entity.TestPlanVO">
@@ -143,7 +168,7 @@
                                      #{functionalMode}, #{tearDown}, #{status})
     </insert>
     <insert id="insertTestResult" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.hitices.pressure.entity.TestResultVO">
-        insert into test_result value (null, #{httpSamplerProxyId}, #{timestamp}, #{startTime}, #{endTime}, #{idleTime}, #{pauseTime}, #{connectTime}, #{latency}, #{responseCode}, #{responseData}, #{responseMessage}, #{responseHeaders}, #{bytes}, #{headersSize}, #{bodySize}, #{sentBytes})
+        insert into test_result value (null, #{planId}, #{timestamp}, #{startTime}, #{endTime}, #{idleTime}, #{pauseTime}, #{connectTime}, #{latency}, #{responseCode}, #{responseData}, #{responseMessage}, #{responseHeaders}, #{bytes}, #{headersSize}, #{bodySize}, #{sentBytes})
     </insert>
     <insert id="insertThreadGroups" useGeneratedKeys="true" keyProperty="id">
         insert into thread_group values

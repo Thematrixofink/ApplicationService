@@ -14,13 +14,15 @@ import java.util.Date;
 public class MyResultCollector extends ResultCollector {
 
     private PressureMeasurementService pressureMeasurementService;
+    private int planId;
 
     public MyResultCollector(){
         super();
     }
 
-    public MyResultCollector(Summariser summariser){
+    public MyResultCollector(Summariser summariser, int planId){
         super(summariser);
+        this.planId = planId;
     }
 
     public void setPressureMeasurementService(PressureMeasurementService pressureMeasurementService){
@@ -38,7 +40,7 @@ public class MyResultCollector extends ResultCollector {
         System.out.println("request headers:"+result.getRequestHeaders());
 
         TestResultVO testResultVO = new TestResultVO(0,
-                0,
+                planId,
                 new Date(result.getTimeStamp()),
                 new Date(result.getStartTime()),
                 new Date(result.getEndTime()),

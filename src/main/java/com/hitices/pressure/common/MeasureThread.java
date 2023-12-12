@@ -58,7 +58,7 @@ public class MeasureThread implements Runnable {
                 //创建http信息头管理器
                 HeaderManager headerManager = JMeterUtil.createHeaderManager(threadGroupVO.getHeaderManagerVO());
 
-                ResultCollector resultCollector = JMeterUtil.createResultCollector(pressureMeasurementService);
+                ResultCollector resultCollector = JMeterUtil.createResultCollector(pressureMeasurementService, testPlanVO.getId());
 //                Summariser summer = new Summariser();
 //                SummaryReport summaryReport = new SummaryReport();
 //                ViewResultsFullVisualizer v = new ViewResultsFullVisualizer();

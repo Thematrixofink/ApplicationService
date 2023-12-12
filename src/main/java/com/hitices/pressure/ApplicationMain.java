@@ -70,7 +70,7 @@ public class ApplicationMain {
 //            resultCollector.setProperty(TestElement.TEST_CLASS,ResultCollector.class.getName());
 //            resultCollector.setProperty(TestElement.GUI_CLASS, ViewResultsFullVisualizer.class.getName());
 //            resultCollector.setFilename("D:\\result\\result.jtl");
-            MyResultCollector resultCollector = new MyResultCollector(summer);
+            MyResultCollector resultCollector = new MyResultCollector(summer, 0);
             resultCollector.setName("收集结果");
             resultCollector.setProperty(TestElement.TEST_CLASS, ResultCollector.class.getName());
             resultCollector.setProperty(TestElement.GUI_CLASS, ViewResultsFullVisualizer.class.getName());
