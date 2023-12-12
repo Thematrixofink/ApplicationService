@@ -27,4 +27,6 @@ public interface PressureMeasurementService {
     void updateTestPlan(TestPlanVO testPlanVO);
 
     void addTimers(List<TimerVO> timers, int threadGroupId);
+
+    int addTestResult(TestResultVO testResultVO);
 }

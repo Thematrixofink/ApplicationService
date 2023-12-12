@@ -5,8 +5,11 @@ import org.apache.jmeter.reporters.ResultCollector;
 import org.apache.jmeter.reporters.Summariser;
 import org.apache.jmeter.samplers.SampleEvent;
 import org.apache.jmeter.samplers.SampleResult;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 public class MyResultCollector extends ResultCollector {
 
@@ -33,6 +36,25 @@ public class MyResultCollector extends ResultCollector {
         System.out.println("code:"+result.getResponseCode());
         System.out.println("response data:"+result.getResponseDataAsString());
         System.out.println("request headers:"+result.getRequestHeaders());
-        pressureMeasurementService.addResults(result);
+
+        TestResultVO testResultVO = new TestResultVO(0,
+                0,
+                new Date(result.getTimeStamp()),
+                new Date(result.getStartTime()),
+                new Date(result.getEndTime()),
+                new Date(result.getIdleTime()),
+                new Date(result.getIdleTime()),
+                result.getConnectTime(),
+                result.getLatency(),
+                result.getResponseCode(),
+                new String(result.getResponseData()),
+                result.getResponseMessage(),
+                result.getResponseHeaders(),
+                result.getBytesAsLong(),
+                result.getHeadersSize(),
+                result.getBodySizeAsLong(),
+                result.getSentBytes());
+
+        pressureMeasurementService.addTestResult(testResultVO);
     }
 }

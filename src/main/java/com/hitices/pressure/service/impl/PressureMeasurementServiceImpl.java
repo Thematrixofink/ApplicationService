@@ -172,6 +172,10 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
 
     }
 
+    public int addTestResult(TestResultVO testResultVO) {
+        return pressureMeasurementMapper.insertTestResult(testResultVO);
+    }
+
     private void saveThreadGroups(List<ThreadGroupVO> threadGroupVOList) {
 
         pressureMeasurementMapper.insertThreadGroups(threadGroupVOList);
@@ -250,4 +254,6 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
         concreteTimer.setThreadGroupId(timer.getThreadGroupId());
         concreteTimer.setTimerType(timer.getTimerType());
     }
+
+
 }

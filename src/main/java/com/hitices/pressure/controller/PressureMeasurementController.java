@@ -44,14 +44,14 @@ public class PressureMeasurementController {
     }
 
     @GetMapping("/measure")
-    public MResponse<List<SampleResult>> measure(@RequestParam("testPlanId") int testPlanId) {
+    public MResponse<Boolean> measure(@RequestParam("testPlanId") int testPlanId) {
         try {
             pressureMeasurementService.measure(testPlanId);
         } catch (JsonProcessingException e) {
-            return new MResponse<List<SampleResult>>().failedMResponse();
+            return new MResponse<Boolean>().failedMResponse().data(false);
         }
 
-        return new MResponse<List<SampleResult>>().successMResponse().data(pressureMeasurementService.getResults());
+        return new MResponse<Boolean>().successMResponse().data(true);
     }
 
     @PostMapping("/createTestPlan")

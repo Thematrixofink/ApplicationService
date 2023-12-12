@@ -142,6 +142,9 @@
         insert into test_plan value (null, #{testPlanName}, #{comment}, #{serialized},
                                      #{functionalMode}, #{tearDown}, #{status})
     </insert>
+    <insert id="insertTestResult" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.hitices.pressure.entity.TestResultVO">
+        insert into test_result value (null, #{httpSamplerProxyId}, #{timestamp}, #{startTime}, #{endTime}, #{idleTime}, #{pauseTime}, #{connectTime}, #{latency}, #{responseCode}, #{responseData}, #{responseMessage}, #{responseHeaders}, #{bytes}, #{headersSize}, #{bodySize}, #{sentBytes})
+    </insert>
     <insert id="insertThreadGroups" useGeneratedKeys="true" keyProperty="id">
         insert into thread_group values
         <foreach collection="threadGroups" item="threadGroup" separator=",">

@@ -1,0 +1,6 @@
+**/*.log
+**/*.classes
+**/*.class
+**/*.jar
+/target
+/.idea

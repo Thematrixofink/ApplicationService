@@ -1,22 +1,28 @@
 package com.hitices.pressure.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter
 @Setter
-public class TestResult {
+@AllArgsConstructor
+public class TestResultVO {
     private int id;
     private int httpSamplerProxyId;
-    private long timestamp;
-    private long startTime;
-    private long endTime;
-    private long idleTime;
-    private long pauseTime;
+    private Date timestamp;
+    private Date startTime;
+    private Date endTime;
+    private Date idleTime;
+    private Date pauseTime;
     private long connectTime;
     private long latency;
-    private int responseCode;
+    private String responseCode;
     private String responseData;
+    private String responseMessage;
     private String responseHeaders;
     private long bytes;
     private int headersSize;

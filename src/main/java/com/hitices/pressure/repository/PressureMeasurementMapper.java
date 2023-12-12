@@ -61,5 +61,7 @@ public interface PressureMeasurementMapper {
 
     int deleteThreadGroupByTestPlanId(@Param("testPlanId") int testPlanId);
 
+    int insertTestResult(TestResultVO testResultVO);
+
     void updateTestPlan(TestPlanVO testPlan);
 }
