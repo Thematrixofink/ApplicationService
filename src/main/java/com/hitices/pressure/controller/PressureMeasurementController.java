@@ -80,4 +80,9 @@ public class PressureMeasurementController {
     public MResponse<List<TestResultVO>> getTestResultsById(int testPlanId) {
         return new MResponse<List<TestResultVO>>().successMResponse().data(pressureMeasurementService.getTestResultsByPlanId(testPlanId));
     }
+
+    @GetMapping("/getTestResultByResultId")
+    public MResponse<TestResultVO> getTestResultByResultId(int testResultId) {
+        return new MResponse<TestResultVO>().successMResponse().data(pressureMeasurementService.getTestResultByResultId(testResultId));
+    }
 }

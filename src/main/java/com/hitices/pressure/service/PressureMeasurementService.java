@@ -31,4 +31,6 @@ public interface PressureMeasurementService {
     int addTestResult(TestResultVO testResultVO);
 
     List<TestResultVO> getTestResultsByPlanId(int planId);
+
+    TestResultVO getTestResultByResultId(int testResultId);
 }

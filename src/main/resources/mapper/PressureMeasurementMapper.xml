@@ -161,6 +161,11 @@
         from test_result
         where plan_id = #{planId};
     </select>
+    <select id="getTestResultByResultId" resultMap="TestResultMap">
+        select *
+        from test_result
+        where id = #{testResultId}
+    </select>
 
     <insert id="insertTestPlan" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
             parameterType="com.hitices.pressure.entity.TestPlanVO">

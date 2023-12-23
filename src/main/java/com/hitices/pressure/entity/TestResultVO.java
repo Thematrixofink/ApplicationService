@@ -16,8 +16,8 @@ public class TestResultVO {
     private Date timestamp;
     private Date startTime;
     private Date endTime;
-    private Date idleTime;
-    private Date pauseTime;
+    private long idleTime;
+    private long pauseTime;
     private long connectTime;
     private long latency;
     private String responseCode;

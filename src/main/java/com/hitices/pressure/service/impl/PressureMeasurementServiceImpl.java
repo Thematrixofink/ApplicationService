@@ -180,6 +180,10 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
         return pressureMeasurementMapper.getTestResultsByPlanId(planId);
     }
 
+    public TestResultVO getTestResultByResultId(int testResultId) {
+        return pressureMeasurementMapper.getTestResultByResultId(testResultId);
+    }
+
 
 
     private void saveThreadGroups(List<ThreadGroupVO> threadGroupVOList) {
