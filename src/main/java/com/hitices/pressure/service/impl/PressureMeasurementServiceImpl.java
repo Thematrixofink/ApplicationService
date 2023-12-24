@@ -10,11 +10,11 @@ import com.hitices.pressure.repository.PressureMeasurementMapper;
 import com.hitices.pressure.service.PressureMeasurementService;
 import org.apache.jmeter.samplers.SampleResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 @Service
 public class PressureMeasurementServiceImpl implements PressureMeasurementService {
@@ -70,6 +70,101 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
             refactorTestPlanVO(testPlanVO);
         }
         return testPlanVO;
+    }
+
+    @Override
+    public AggregateReportVO getAggregateReportByPlanId(int planId) {
+        AggregateReportVO aggregateReportVO = pressureMeasurementMapper.getAggregateReport(planId);
+        if (aggregateReportVO != null) {
+            return aggregateReportVO;
+        }
+        return null;
+    }
+
+    private static double calculateMedian(List<TestResultVO> sortedData) {
+        int middle = sortedData.size() / 2;
+        if (sortedData.size() % 2 == 0) {
+            return (sortedData.get(middle - 1).getLatency() + sortedData.get(middle).getLatency()) / 2.0;
+        } else {
+            return sortedData.get(middle).getLatency();
+        }
+    }
+
+    // 计算百分位数的方法
+    private static double calculatePercentile(List<TestResultVO> sortedData, int percentile) {
+        if (percentile < 0 || percentile > 100) {
+            throw new IllegalArgumentException("百分位数必须在0到100之间");
+        }
+        double index = percentile / 100.0 * (sortedData.size() - 1);
+        if (index == Math.floor(index)) {
+            return sortedData.get((int) index).getLatency();
+        } else {
+            int lowerIndex = (int) Math.floor(index);
+            int upperIndex = (int) Math.ceil(index);
+            return (sortedData.get(lowerIndex).getLatency() + sortedData.get(upperIndex).getLatency()) / 2.0;
+        }
+    }
+
+    public AggregateReportVO calculateReport(int planId) {
+        class LatencyComparator implements Comparator<TestResultVO> {
+            @Override
+            public int compare(TestResultVO r1, TestResultVO r2) {
+                return (int) (r1.getLatency() - r2.getLatency());
+            }
+        }
+        class StartTimeComparator implements Comparator<TestResultVO> {
+            @Override
+            public int compare(TestResultVO r1, TestResultVO r2) {
+                return r2.getTimestamp().compareTo(r1.getTimestamp());
+            }
+        }
+        AggregateReportVO aggregateReportVO = new AggregateReportVO();
+        List<TestResultVO> resultList = pressureMeasurementMapper.getTestResultsByPlanId(planId);
+        int samplesNum = resultList.size();
+        if(samplesNum > 0) {
+            Collections.sort(resultList, new LatencyComparator());
+            double min = resultList.get(0).getLatency();
+            double max = resultList.get(samplesNum - 1).getLatency();
+            double sum = resultList.stream().reduce(0f, (result, item) -> result + item.getLatency(), (i1, i2) -> i1 + i2);
+            int errorNum = resultList.stream().reduce(0, (result, item) -> result + (item.isSuccess() ? 0: 1), (i1, i2) -> i1 + i2);
+            double median = calculateMedian(resultList);
+            double p50 = calculatePercentile(resultList, 50);
+            double p95 = calculatePercentile(resultList, 95);
+            double p99 = calculatePercentile(resultList, 99);
+            aggregateReportVO.setSamplesNum(samplesNum);
+            aggregateReportVO.setAverage(sum / samplesNum);
+            aggregateReportVO.setErrorRate(errorNum / samplesNum);
+            aggregateReportVO.setMax(max);
+            aggregateReportVO.setMin(min);
+            aggregateReportVO.setMedian(median);
+            aggregateReportVO.setP50(p50);
+            aggregateReportVO.setP95(p95);
+            aggregateReportVO.setP99(p99);
+            aggregateReportVO.setPlanId(planId);
+            Collections.sort(resultList, new StartTimeComparator());
+            double sec = (resultList.get(0).getTimestamp().getTime() - resultList.get(samplesNum - 1).getTimestamp().getTime()) / 1000;
+            if (Double.compare(sec, 1.0) < 0) {
+                sec = 1;
+            }
+            aggregateReportVO.setTps(samplesNum / sec);
+        }
+        return aggregateReportVO;
+    }
+
+    @Override
+    public boolean addAggregateReport(int planId) {
+        AggregateReportVO aggregateReportVO = calculateReport(planId);
+        int res = pressureMeasurementMapper.insertAggregateReport(aggregateReportVO);
+        if(res <= 0) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int updateAggregateReport(int planId) {
+        AggregateReportVO aggregateReportVO = calculateReport(planId);
+        return pressureMeasurementMapper.updateAggregateReport(aggregateReportVO);
     }
 
     public List<TimerVO> getTimersByThreadGroupId(int threadGroupId) {
@@ -183,7 +278,6 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
     public TestResultVO getTestResultByResultId(int testResultId) {
         return pressureMeasurementMapper.getTestResultByResultId(testResultId);
     }
-
 
 
     private void saveThreadGroups(List<ThreadGroupVO> threadGroupVOList) {

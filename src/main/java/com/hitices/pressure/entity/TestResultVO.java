@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class TestResultVO {
     private int id;
@@ -20,6 +20,7 @@ public class TestResultVO {
     private long pauseTime;
     private long connectTime;
     private long latency;
+    private boolean success;
     private String responseCode;
     private String responseData;
     private String responseMessage;
@@ -28,4 +29,9 @@ public class TestResultVO {
     private int headersSize;
     private long bodySize;
     private long sentBytes;
+
+
+//    public boolean getSuccess() {
+//        return this.success;
+//    }
 }

@@ -20,17 +20,25 @@ public interface PressureMeasurementService {
 
     TestPlanVO getTestPlanById(int testPlanId) throws JsonProcessingException;
 
+    AggregateReportVO getAggregateReportByPlanId(int planId);
+
     int deleteTestPlan(int testPlanId);
 
     int addTestPlan(TestPlanVO testPlan);
 
     void updateTestPlan(TestPlanVO testPlanVO);
 
+    int updateAggregateReport(int planId);
+
     void addTimers(List<TimerVO> timers, int threadGroupId);
 
     int addTestResult(TestResultVO testResultVO);
 
+    boolean addAggregateReport(int planId);
+
     List<TestResultVO> getTestResultsByPlanId(int planId);
 
     TestResultVO getTestResultByResultId(int testResultId);
+
+
 }

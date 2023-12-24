@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hitices.pressure.repository.PressureMeasurementMapper">
+    <resultMap id="AggregateReportResultMap" type="com.hitices.pressure.entity.AggregateReportVO">
+        <id property="id" column="id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="samplesNum" column="samples_num"/>
+        <result property="average" column="average"/>
+        <result property="median" column="median"/>
+        <result property="min" column="min"/>
+        <result property="max" column="max"/>
+        <result property="p50" column="p50"/>
+        <result property="p95" column="p95"/>
+        <result property="p99" column="p99"/>
+        <result property="tps" column="tps"/>
+        <result property="errorRate" column="error_rate"/>
+    </resultMap>
     <resultMap id="TestPlanResultMap" type="com.hitices.pressure.entity.TestPlanVO">
         <id property="id" column="id"/>
         <result property="comment" column="comment"/>
@@ -38,7 +52,8 @@
         <result property="idleTime" column="idle_time"/>
         <result property="pauseTime" column="pause_time"/>
         <result property="connectTime" column="connect_time"/>
-        <result property="latency" column="delay"/>
+        <result property="latency" column="latency"/>
+        <result property="success" column="success"/>
         <result property="responseCode" column="response_code"/>
         <result property="responseData" column="response_data"/>
         <result property="responseMessage" column="response_message"/>
@@ -98,6 +113,11 @@
     <select id="getAllTestPlans" resultMap="TestPlanResultMap">
         select *
         from test_plan
+    </select>
+    <select id="getAggregateReport" resultMap="AggregateReportResultMap">
+        select *
+        from aggregate_report
+        where plan_id = #{planId}
     </select>
     <select id="getTestPlanById" resultMap="TestPlanResultMap">
         select *
@@ -173,7 +193,7 @@
                                      #{functionalMode}, #{tearDown}, #{status})
     </insert>
     <insert id="insertTestResult" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.hitices.pressure.entity.TestResultVO">
-        insert into test_result value (null, #{planId}, #{timestamp}, #{startTime}, #{endTime}, #{idleTime}, #{pauseTime}, #{connectTime}, #{latency}, #{responseCode}, #{responseData}, #{responseMessage}, #{responseHeaders}, #{bytes}, #{headersSize}, #{bodySize}, #{sentBytes})
+        insert into test_result value (null, #{planId}, #{timestamp}, #{startTime}, #{endTime}, #{idleTime}, #{pauseTime}, #{connectTime}, #{latency}, #{success}, #{responseCode}, #{responseData}, #{responseMessage}, #{responseHeaders}, #{bytes}, #{headersSize}, #{bodySize}, #{sentBytes})
     </insert>
     <insert id="insertThreadGroups" useGeneratedKeys="true" keyProperty="id">
         insert into thread_group values
@@ -211,6 +231,10 @@
     <insert id="insertLoopController" useGeneratedKeys="true" keyProperty="id">
         insert into loop_controller
             VALUE (null, #{loopControllerName}, #{comment}, #{loopNum}, #{continueForever}, #{threadGroupId})
+    </insert>
+    <insert id="insertAggregateReport" useGeneratedKeys="true" keyProperty="id">
+        insert into aggregate_report
+            VALUE (null, #{planId}, #{samplesNum}, #{average}, #{median}, #{min}, ${max}, ${p50}, ${p95}, ${p99}, ${tps}, ${errorRate})
     </insert>
     <insert id="insertConstantTimerList" useGeneratedKeys="true" keyProperty="id">
         insert into constant_timer values
@@ -270,5 +294,19 @@
             status          = #{status}
         where id = #{id}
 
+    </update>
+    <update id="updateAggregateReport" parameterType="com.hitices.pressure.entity.AggregateReportVO" keyColumn="id" keyProperty="id">
+        update aggregate_report
+        set samples_num = #{samplesNum},
+            average = #{average},
+            median = #{median},
+            min = #{min},
+            max = #{max},
+            p50 = #{p50},
+            p95 = #{p95},
+            p99 = #{p99},
+            tps = #{tps},
+            error_rate = #{errorRate}
+        where plan_id = #{planId}
     </update>
 </mapper>

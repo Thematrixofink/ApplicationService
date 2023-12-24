@@ -33,6 +33,8 @@ public interface PressureMeasurementMapper {
 
     List<ThreadGroupVO> getThreadGroupsByTestPlanId(@Param("testPlanId") int testPlanId);
 
+    AggregateReportVO getAggregateReport(@Param("planId") int planId);
+
     int insertTestPlan(TestPlanVO testPlan);
 
     int insertThreadGroups(@Param("threadGroups") List<ThreadGroupVO> threadGroups);
@@ -44,6 +46,8 @@ public interface PressureMeasurementMapper {
     int insertCookieManagerList(@Param("cookieManagerList") List<CookieManagerVO> cookieManagerList);
 
     int insertLoopController(LoopControllerVO loopControllerVO);
+
+    int insertAggregateReport(AggregateReportVO aggregateReportVO);
 
     int insertConstantTimerList(@Param("constantTimerList") List<ConstantTimerVO> constantTimerList);
 
@@ -64,6 +68,8 @@ public interface PressureMeasurementMapper {
     int insertTestResult(TestResultVO testResultVO);
 
     void updateTestPlan(TestPlanVO testPlan);
+
+    int updateAggregateReport(AggregateReportVO aggregateReportVO);
 
     List<TestResultVO> getTestResultsByPlanId(@Param("planId") int testPlanId);
 

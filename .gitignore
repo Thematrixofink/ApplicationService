@@ -1,7 +1,6 @@
-*.log
-*.class
-**.class
 **/*.class
 **/*.jar
+**/*.jtl
+**/*.log
 /target
 /.idea

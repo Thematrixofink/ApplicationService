@@ -3,6 +3,7 @@ package com.hitices.pressure.controller;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hitices.pressure.common.MResponse;
+import com.hitices.pressure.entity.AggregateReportVO;
 import com.hitices.pressure.entity.TestPlanVO;
 import com.hitices.pressure.entity.TestResultVO;
 import com.hitices.pressure.service.PressureMeasurementService;
@@ -76,6 +77,22 @@ public class PressureMeasurementController {
         return new MResponse<>().successMResponse();
     }
 
+    @GetMapping("/updateAggregateReport")
+    public MResponse<Object> updateAggregateReport(int planId) {
+        if(pressureMeasurementService.updateAggregateReport(planId) <= 0) {
+            return new MResponse<>().failedMResponse();
+        }
+        return new MResponse<>().successMResponse();
+    }
+
+    @GetMapping("/createAggregateReport")
+    public MResponse<Object> createAggregateReport(int planId) {
+        if(pressureMeasurementService.addAggregateReport(planId)) {
+            return new MResponse<>().failedMResponse();
+        }
+        return new MResponse<>().successMResponse();
+    }
+
     @GetMapping("/getTestResultsByID")
     public MResponse<List<TestResultVO>> getTestResultsById(int testPlanId) {
         return new MResponse<List<TestResultVO>>().successMResponse().data(pressureMeasurementService.getTestResultsByPlanId(testPlanId));
@@ -85,4 +102,11 @@ public class PressureMeasurementController {
     public MResponse<TestResultVO> getTestResultByResultId(int testResultId) {
         return new MResponse<TestResultVO>().successMResponse().data(pressureMeasurementService.getTestResultByResultId(testResultId));
     }
+
+    @GetMapping("/getAggregateReportByPlanId")
+    public MResponse<AggregateReportVO> getAggregateReportByPlanId(int planId) {
+        return new MResponse<AggregateReportVO>().successMResponse().data(pressureMeasurementService.getAggregateReportByPlanId(planId));
+    }
+
+
 }

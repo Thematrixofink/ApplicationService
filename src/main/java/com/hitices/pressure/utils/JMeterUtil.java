@@ -52,9 +52,6 @@ public class JMeterUtil {
     public static TestPlan createTestPlan(TestPlanVO testPlanVO) {
         TestPlan testPlan = new TestPlan();
         testPlan.setProperty(TestElement.TEST_CLASS, TestPlan.class.getName());
-//        testPlan.setProperty(TestElement.GUI_CLASS, TestPlanGui.class.getName());
-//        testPlan.setUserDefinedVariables((Arguments) new ArgumentsPanel().createTestElement());
-//        new Argument()
 
         if (!StringUtils.isBlank(testPlanVO.getTestPlanName()))
             testPlan.setName(testPlanVO.getTestPlanName());
@@ -184,8 +181,8 @@ public class JMeterUtil {
         resultCollector.setPressureMeasurementService(service);
         resultCollector.setProperty(TestElement.TEST_CLASS, ResultCollector.class.getName());
         resultCollector.setProperty(TestElement.GUI_CLASS, ViewResultsFullVisualizer.class.getName());
+        resultCollector.setFilename("./test.jtl");
         resultCollector.setEnabled(true);
-//        resultCollector.setFilename("result\\result.jtl");
 
         return resultCollector;
     }
