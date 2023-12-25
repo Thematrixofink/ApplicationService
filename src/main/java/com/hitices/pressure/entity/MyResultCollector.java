@@ -33,12 +33,12 @@ public class MyResultCollector extends ResultCollector {
     public void sampleOccurred(SampleEvent event){
         super.sampleOccurred(event);
         SampleResult result = event.getResult();
-        System.out.println("result:"+result);
-        System.out.println("message:"+result.getResponseMessage());
-        System.out.println("data:"+result.getSamplerData());
-        System.out.println("code:"+result.getResponseCode());
-        System.out.println("response data:"+result.getResponseDataAsString());
-        System.out.println("request headers:"+result.getRequestHeaders());
+//        System.out.println("result:"+result);
+//        System.out.println("message:"+result.getResponseMessage());
+//        System.out.println("data:"+result.getSamplerData());
+//        System.out.println("code:"+result.getResponseCode());
+//        System.out.println("response data:"+result.getResponseDataAsString());
+//        System.out.println("request headers:"+result.getRequestHeaders());
 
         TestResultVO testResultVO = new TestResultVO(0,
                 planId,
