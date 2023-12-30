@@ -147,18 +147,25 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
                 sec = 1;
             }
             aggregateReportVO.setTps(samplesNum / sec);
+            return aggregateReportVO;
         }
-        return aggregateReportVO;
+        return null;
     }
 
     @Override
     public boolean addAggregateReport(int planId) {
         AggregateReportVO aggregateReportVO = calculateReport(planId);
-        int res = pressureMeasurementMapper.insertAggregateReport(aggregateReportVO);
-        if(res <= 0) {
+        try {
+            int res = pressureMeasurementMapper.insertAggregateReport(aggregateReportVO);
+            if(res <= 0) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
             return false;
         }
-        return true;
+
+
     }
 
     @Override

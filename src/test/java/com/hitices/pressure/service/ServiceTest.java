@@ -22,4 +22,9 @@ public class ServiceTest {
     public void updateAggregateReport() {
         pressureMeasurementService.updateAggregateReport(17);
     }
+
+    @Test
+    public void createAggregateReport() {
+        pressureMeasurementService.addAggregateReport(17);
+    }
 }

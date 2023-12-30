@@ -88,9 +88,9 @@ public class PressureMeasurementController {
     @GetMapping("/createAggregateReport")
     public MResponse<Object> createAggregateReport(int planId) {
         if(pressureMeasurementService.addAggregateReport(planId)) {
-            return new MResponse<>().failedMResponse();
+            return new MResponse<>().successMResponse();
         }
-        return new MResponse<>().successMResponse();
+        return new MResponse<>().failedMResponse();
     }
 
     @GetMapping("/getTestResultsByID")
