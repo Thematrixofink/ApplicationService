@@ -108,5 +108,14 @@ public class PressureMeasurementController {
         return new MResponse<AggregateReportVO>().successMResponse().data(pressureMeasurementService.getAggregateReportByPlanId(planId));
     }
 
+    @GetMapping("/getStartAndEndOfTest")
+    public MResponse<int[]> getStartAndEndOfTest(int planId) {
+        int[] startAndEnd = pressureMeasurementService.getStartAndEndOfTest(planId);
+        if(startAndEnd[0] == -1) {
+            return new MResponse<int[]>().failedMResponse().data(startAndEnd);
+        }
+        return new MResponse<int[]>().successMResponse().data(startAndEnd);
+    }
+
 
 }

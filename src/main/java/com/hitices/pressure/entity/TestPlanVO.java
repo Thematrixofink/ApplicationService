@@ -24,5 +24,9 @@ public class TestPlanVO {
 
     private String status;
 
+    private String namespace;
+
+    private String podName;
+
     private List<ThreadGroupVO> threadGroupList;
 }

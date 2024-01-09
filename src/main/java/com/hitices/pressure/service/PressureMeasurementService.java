@@ -40,5 +40,6 @@ public interface PressureMeasurementService {
 
     TestResultVO getTestResultByResultId(int testResultId);
 
+    int[] getStartAndEndOfTest(int planId);
 
 }

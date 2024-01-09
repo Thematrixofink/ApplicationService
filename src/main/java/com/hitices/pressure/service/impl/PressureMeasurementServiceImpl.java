@@ -81,6 +81,25 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
         return null;
     }
 
+    @Override
+    public int[] getStartAndEndOfTest(int planId) {
+        class StartTimeComparator implements Comparator<TestResultVO> {
+            @Override
+            public int compare(TestResultVO r1, TestResultVO r2) {
+                return r2.getTimestamp().compareTo(r1.getTimestamp());
+            }
+        }
+        List<TestResultVO> resultList = pressureMeasurementMapper.getTestResultsByPlanId(planId);
+        int samplesNum = resultList.size();
+        if(samplesNum > 0) {
+            Collections.sort(resultList, new StartTimeComparator());
+            int maxStart = (int) (resultList.get(0).getTimestamp().getTime() / 1000);
+            int minStart = (int) (resultList.get(samplesNum - 1).getTimestamp().getTime() / 1000);
+            return new int[]{minStart, maxStart};
+        }
+        return new int[]{-1, -1};
+    }
+
     private static double calculateMedian(List<TestResultVO> sortedData) {
         int middle = sortedData.size() / 2;
         if (sortedData.size() % 2 == 0) {

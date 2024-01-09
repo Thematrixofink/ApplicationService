@@ -27,4 +27,9 @@ public class ServiceTest {
     public void createAggregateReport() {
         pressureMeasurementService.addAggregateReport(17);
     }
+
+    @Test
+    public void testGetStartAndEnd() {
+        System.out.println(pressureMeasurementService.getStartAndEndOfTest(17)[0]);
+    }
 }

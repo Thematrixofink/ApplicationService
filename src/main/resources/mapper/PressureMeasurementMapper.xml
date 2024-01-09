@@ -23,6 +23,8 @@
         <result property="functionalMode" column="functional_mode"/>
         <result property="tearDown" column="tear_down"/>
         <result property="status" column="status"/>
+        <result property="namespace" column="namespace"/>
+        <result property="podName" column="pod_name"/>
         <collection property="threadGroupList" column="{testPlanId = id}" javaType="List"
                     ofType="com.hitices.pressure.entity.ThreadGroupVO" select="getThreadGroupsByTestPlanId"/>
     </resultMap>
@@ -190,7 +192,7 @@
     <insert id="insertTestPlan" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
             parameterType="com.hitices.pressure.entity.TestPlanVO">
         insert into test_plan value (null, #{testPlanName}, #{comment}, #{serialized},
-                                     #{functionalMode}, #{tearDown}, #{status})
+                                     #{functionalMode}, #{tearDown}, #{status}, #{namespace}, #{podName})
     </insert>
     <insert id="insertTestResult" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.hitices.pressure.entity.TestResultVO">
         insert into test_result value (null, #{planId}, #{timestamp}, #{startTime}, #{endTime}, #{idleTime}, #{pauseTime}, #{connectTime}, #{latency}, #{success}, #{responseCode}, #{responseData}, #{responseMessage}, #{responseHeaders}, #{bytes}, #{headersSize}, #{bodySize}, #{sentBytes})
@@ -291,7 +293,9 @@
             serialized      = #{serialized},
             functional_mode = #{functionalMode},
             tear_down       = #{tearDown},
-            status          = #{status}
+            status          = #{status},
+            namespace       = #{namespace},
+            pod_name        = #{podName}
         where id = #{id}
 
     </update>
