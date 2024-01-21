@@ -3,15 +3,25 @@ package com.hitices.pressure.controller;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hitices.pressure.common.MResponse;
-import com.hitices.pressure.entity.AggregateReportVO;
-import com.hitices.pressure.entity.TestPlanVO;
-import com.hitices.pressure.entity.TestResultVO;
+import com.hitices.pressure.entity.*;
 import com.hitices.pressure.service.PressureMeasurementService;
+import com.hitices.pressure.utils.ExcelGenerator;
 import org.apache.jmeter.samplers.SampleResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -115,6 +125,34 @@ public class PressureMeasurementController {
             return new MResponse<int[]>().failedMResponse().data(startAndEnd);
         }
         return new MResponse<int[]>().successMResponse().data(startAndEnd);
+    }
+
+
+
+    @PostMapping("/aggregateReportExcel")
+    public ResponseEntity<InputStreamResource> generateExcel(
+            @RequestParam int planId,
+            @RequestBody MonitorParam monitorParam
+    ) throws IOException {
+        AggregateReportVO aggregateReportVO = pressureMeasurementService.getAggregateReportByPlanId(planId);
+        ArrayList<HardwareRecord> cpuUsage = monitorParam.getCpuUsage();
+        ArrayList<HardwareRecord> memoryUsage = monitorParam.getMemoryUsage();
+        ArrayList<NetworkRecord> byteTransmitted = monitorParam.getByteTransmitted();
+        ArrayList<NetworkRecord> byteReceived = monitorParam.getByteReceived();
+        InputStream inputStream = ExcelGenerator.generateAggregateReportExcel(aggregateReportVO, cpuUsage, memoryUsage, byteTransmitted, byteReceived);
+//        InputStream inputStream = ExcelGenerator.generateAggregateReportExcel(aggregateReportVO, cpuUsage, memoryUsage, byteTransmitted, byteReceived);
+
+        if (inputStream != null) {
+            InputStreamResource resource = new InputStreamResource(inputStream);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(inputStream.available())
+                    .body(resource);
+        } else {
+            // 处理InputStream为null的情况，可以返回适当的错误响应
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+        }
     }
 
 
