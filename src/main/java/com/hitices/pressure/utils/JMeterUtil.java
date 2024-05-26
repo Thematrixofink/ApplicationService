@@ -18,6 +18,7 @@ import org.apache.jmeter.protocol.http.gui.HeaderPanel;
 import org.apache.jmeter.protocol.http.sampler.HTTPSamplerProxy;
 import org.apache.jmeter.reporters.ResultCollector;
 import org.apache.jmeter.reporters.Summariser;
+import org.apache.jmeter.save.SaveService;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.testelement.TestPlan;
 import org.apache.jmeter.threads.ThreadGroup;
@@ -32,10 +33,18 @@ import org.apache.jmeter.visualizers.ViewResultsFullVisualizer;
 import org.apache.jorphan.collections.HashTree;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 public class JMeterUtil {
+
+    public static String WINDOWS_HOME= "C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\";
+    public static String WINDOWS_FILE_PATH = "C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\bin\\jmeter.properties";
+    public static String LINUX_HOME= "/opt/jmeter/";
+    public static String LINUX_FILE_PATH = "/opt/jmeter/bin/jmeter.properties";
 
     public static StandardJMeterEngine init(String JMeterHome, String filePath) {
 
@@ -47,6 +56,43 @@ public class JMeterUtil {
         JMeterUtils.initLocale();
 
         return new StandardJMeterEngine();
+    }
+
+    public static int saveTestPlan(TestPlanVO testPlanVO, PressureMeasurementService pressureMeasurementService) throws IOException {
+        StandardJMeterEngine standardJMeterEngine;
+        String system = System.getProperty("os.name");
+        if(system.equals("Windows 11")) {
+            standardJMeterEngine = init(WINDOWS_HOME, WINDOWS_FILE_PATH);
+        } else {
+            standardJMeterEngine = init(LINUX_HOME, LINUX_FILE_PATH);
+        }
+        HashTree testPlanTree = new HashTree();
+
+        //创建线程组，并添加到测试计划中
+        for (ThreadGroupVO threadGroupVO : testPlanVO.getThreadGroupList()) {
+            HashTree threadGroupTree = new HashTree();
+            ThreadGroup threadGroup = JMeterUtil.createThreadGroup(threadGroupVO);
+
+            //创建循环控制器
+            LoopController loopController = JMeterUtil.createLoopController(threadGroupVO.getLoopControllerVO());
+            //为线程组添加循环控制器
+            threadGroup.setSamplerController(loopController);
+            //创建http请求取样器
+            HTTPSamplerProxy httpSamplerProxy = JMeterUtil.createHTTPSamplerProxy(threadGroupVO.getHttpSamplerProxyVO());
+            //创建http信息头管理器
+            HeaderManager headerManager = JMeterUtil.createHeaderManager(threadGroupVO.getHeaderManagerVO());
+
+            ResultCollector resultCollector = JMeterUtil.createResultCollector(pressureMeasurementService, testPlanVO.getId());
+
+            threadGroupTree.add(httpSamplerProxy);
+            threadGroupTree.add(headerManager);
+            JMeterUtil.addTimers(threadGroupTree, threadGroupVO.getTimers());
+            threadGroupTree.add(resultCollector);
+
+            testPlanTree.add(threadGroup, threadGroupTree);
+        }
+        SaveService.saveTree(testPlanTree, new FileOutputStream(new File("example.jmx")));
+        return 1;
     }
 
     public static TestPlan createTestPlan(TestPlanVO testPlanVO) {

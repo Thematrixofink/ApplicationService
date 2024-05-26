@@ -26,6 +26,8 @@ public interface PressureMeasurementService {
 
     int addTestPlan(TestPlanVO testPlan);
 
+    int addBoundaryTestPlan(TestPlanVO testPlan);
+
     void updateTestPlan(TestPlanVO testPlanVO);
 
     int updateAggregateReport(int planId);

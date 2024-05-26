@@ -31,9 +31,9 @@ public class MeasureThread implements Runnable {
     public void run() {
         StandardJMeterEngine standardJMeterEngine;
         if(this.system.equals("Windows 11")) {
-            standardJMeterEngine = JMeterUtil.init("C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\","C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\bin\\jmeter.properties");
+            standardJMeterEngine = JMeterUtil.init(JMeterUtil.WINDOWS_HOME, JMeterUtil.WINDOWS_FILE_PATH);
         } else {
-            standardJMeterEngine = JMeterUtil.init("/opt/jmeter/","/opt/jmeter/bin/jmeter.properties");
+            standardJMeterEngine = JMeterUtil.init(JMeterUtil.LINUX_HOME, JMeterUtil.LINUX_FILE_PATH);
         }
 
         if (standardJMeterEngine != null) {

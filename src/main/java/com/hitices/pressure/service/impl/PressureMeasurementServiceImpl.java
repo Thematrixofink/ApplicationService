@@ -238,6 +238,14 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
         return 1;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int addBoundaryTestPlan(TestPlanVO testPlan) {
+        testPlan.setStatus("Created");
+
+        return 1;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateTestPlan(TestPlanVO testPlanVO) {

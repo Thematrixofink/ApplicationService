@@ -72,7 +72,14 @@ public class PressureMeasurementController {
             return new MResponse<>().failedMResponse();
         }
         return new MResponse<>().successMResponse();
+    }
 
+    @PostMapping("/createBoundaryTest")
+    public MResponse<Object> createBoundaryTest(@RequestBody TestPlanVO testPlanVO) {
+        if (pressureMeasurementService.addTestPlan(testPlanVO) <= 0) {
+            return new MResponse<>().failedMResponse();
+        }
+        return new MResponse<>().successMResponse();
     }
 
     @GetMapping("/deleteTestPlan")
