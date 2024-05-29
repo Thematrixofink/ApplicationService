@@ -8,6 +8,7 @@ import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jmeter.config.gui.ArgumentsPanel;
 import org.apache.jmeter.control.LoopController;
+import org.apache.jmeter.control.TransactionController;
 import org.apache.jmeter.control.gui.LoopControlPanel;
 import org.apache.jmeter.control.gui.TestPlanGui;
 import org.apache.jmeter.engine.StandardJMeterEngine;
@@ -29,8 +30,10 @@ import org.apache.jmeter.timers.gui.GaussianRandomTimerGui;
 import org.apache.jmeter.timers.gui.PoissonRandomTimerGui;
 import org.apache.jmeter.timers.gui.UniformRandomTimerGui;
 import org.apache.jmeter.util.JMeterUtils;
+import org.apache.jmeter.visualizers.BeanShellListener;
 import org.apache.jmeter.visualizers.ViewResultsFullVisualizer;
 import org.apache.jorphan.collections.HashTree;
+import ucar.units.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -62,15 +65,19 @@ public class JMeterUtil {
         StandardJMeterEngine standardJMeterEngine;
         String system = System.getProperty("os.name");
         if(system.equals("Windows 11")) {
-            standardJMeterEngine = init(WINDOWS_HOME, WINDOWS_FILE_PATH);
+            init(WINDOWS_HOME, WINDOWS_FILE_PATH);
         } else {
-            standardJMeterEngine = init(LINUX_HOME, LINUX_FILE_PATH);
+            init(LINUX_HOME, LINUX_FILE_PATH);
         }
         HashTree testPlanTree = new HashTree();
+        TestPlan testPlan = new TestPlan("Example Test Plan");
+        testPlan.setProperty(TestElement.GUI_CLASS, "TestPlanGui");
+        testPlan.setProperty(TestElement.TEST_CLASS, "TestPlan");
+        testPlan.setEnabled(true);
 
         //创建线程组，并添加到测试计划中
         for (ThreadGroupVO threadGroupVO : testPlanVO.getThreadGroupList()) {
-            HashTree threadGroupTree = new HashTree();
+            HashTree threadGroupTree = testPlanTree.add(testPlan);
             ThreadGroup threadGroup = JMeterUtil.createThreadGroup(threadGroupVO);
 
             //创建循环控制器
@@ -84,14 +91,79 @@ public class JMeterUtil {
 
             ResultCollector resultCollector = JMeterUtil.createResultCollector(pressureMeasurementService, testPlanVO.getId());
 
-            threadGroupTree.add(httpSamplerProxy);
-            threadGroupTree.add(headerManager);
-            JMeterUtil.addTimers(threadGroupTree, threadGroupVO.getTimers());
-            threadGroupTree.add(resultCollector);
+            BeanShellListener beanShellListener = new BeanShellListener();
+            beanShellListener.setName("BeanShell Listener");
+            beanShellListener.setProperty("resetInterpreter", false);
+            beanShellListener.setProperty(TestElement.GUI_CLASS, "TestBeanGUI");
+            beanShellListener.setProperty(TestElement.TEST_CLASS, "BeanShellListener");
+            beanShellListener.setProperty("script", "log.info(\"This is a BeanShell Listener script execution.\");");
 
-            testPlanTree.add(threadGroup, threadGroupTree);
+
+
+            TransactionController transactionController = new TransactionController();
+            transactionController.setName("并发线程数—${thread}");
+            transactionController.setEnabled(true);
+            transactionController.setProperty("TransactionController.includeTimers", false);
+            transactionController.setProperty("TransactionController.parent", false);
+            transactionController.setProperty(TestElement.GUI_CLASS, "TransactionControllerGui");
+            transactionController.setProperty(TestElement.TEST_CLASS, "TransactionController");
+
+            // 将事务控制器添加到线程组
+
+
+
+
+            HashTree siblingTree = new HashTree();
+            siblingTree.add(beanShellListener);
+            HashTree transactionControllerHashTree = siblingTree.add(transactionController);
+
+
+            transactionControllerHashTree.add(httpSamplerProxy);
+            transactionControllerHashTree.add(headerManager);
+            JMeterUtil.addTimers(transactionControllerHashTree, threadGroupVO.getTimers());
+            transactionControllerHashTree.add(resultCollector);
+
+            threadGroupTree.add(threadGroup, siblingTree);
+//            threadGroupTree.add(siblingTree);
         }
-        SaveService.saveTree(testPlanTree, new FileOutputStream(new File("example.jmx")));
+
+//        // 创建测试计划
+//        TestPlan testPlan = new TestPlan("JMeter Test Plan");
+//        testPlan.setEnabled(true);
+//
+//        // 创建线程组
+//        ThreadGroup threadGroup = new ThreadGroup();
+//        threadGroup.setName("JMeter Thread Group");
+//        threadGroup.setNumThreads(10);
+//        threadGroup.setRampUp(1);
+//        threadGroup.setScheduler(false);
+//
+//        // 创建HTTP请求
+//        HTTPSamplerProxy httpSampler = new HTTPSamplerProxy();
+//        httpSampler.setDomain("www.example.com");
+//        httpSampler.setPort(80);
+//        httpSampler.setPath("/");
+//        httpSampler.setMethod("GET");
+//
+//        // 创建BeanShell Listener并设置脚本
+//        BeanShellListener beanShellListener = new BeanShellListener();
+//        beanShellListener.setName("BeanShell Listener");
+//        beanShellListener.setProperty("resetInterpreter", false);
+//        beanShellListener.setProperty("script", "log.info(\"This is a BeanShell Listener script execution.\");");
+//        // 构建测试计划结构
+//        HashTree testPlanTree = new HashTree();
+//        HashTree threadGroupHashTree = testPlanTree.add(testPlan);
+//        HashTree httpSamplerHashTree = threadGroupHashTree.add(httpSampler);
+//        threadGroupHashTree.add(threadGroup, httpSamplerHashTree);
+//        // 创建一个单独的 HashTree 来保存 BeanShellListener 的脚本内容
+//        HashTree beanShellListenerHashTree = new HashTree();
+//        beanShellListenerHashTree.add(beanShellListener);
+//
+//        // 将 BeanShellListener 的脚本内容添加到测试计划结构中
+//        threadGroupHashTree.add(beanShellListenerHashTree);
+
+        SaveService.saveTree(testPlanTree, new FileOutputStream(new File("example1.jmx")));
+
         return 1;
     }
 

@@ -27,6 +27,7 @@ kubectl apply -f deployment.yaml
 ```
 
 ## application.yaml
+```
 server:
   port: 8848
 spring:
@@ -43,6 +44,7 @@ mybatis:
   type-aliases-package: com.hitices.pressure.repository
   configuration:
     map-underscore-to-camel-case: true
+```
 
 ## Database configuration
 1. Prepare image and run
