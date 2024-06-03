@@ -1,31 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="4.0" jmeter="4.0 r1823414">
+<?xml version="1.0" encoding="UTF-8"?><jmeterTestPlan jmeter="4.0 r1823414" properties="4.0" version="1.2">
   <org.apache.jorphan.collections.HashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Example Test Plan" enabled="true"/>
+    <TestPlan enabled="true" guiclass="TestPlanGui" testclass="TestPlan" testname="Example Test Plan"/>
     <org.apache.jorphan.collections.HashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="thread group">
-        <intProp name="ThreadGroup.num_threads">5</intProp>
-        <intProp name="ThreadGroup.ramp_time">2</intProp>
-        <boolProp name="ThreadGroup.scheduler">false</boolProp>
-        <longProp name="ThreadGroup.duration">0</longProp>
-        <longProp name="ThreadGroup.delay">0</longProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController">
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-          <intProp name="LoopController.loops">1</intProp>
-        </elementProp>
-      </ThreadGroup>
+      <kg.apc.jmeter.threads.SteppingThreadGroup enabled="true" guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="jp@gc - Stepping Thread Group">
+<stringProp name="ThreadGroup.num_threads">40</stringProp>
+<stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+<stringProp name="Threads initial delay">0</stringProp>
+<stringProp name="Start users count">10</stringProp>
+<stringProp name="Start users count burst">0</stringProp>
+<stringProp name="Start users period">3</stringProp>
+<stringProp name="Stop users count">30</stringProp>
+<stringProp name="Stop users period">0</stringProp>
+<stringProp name="flighttime">3</stringProp>
+<stringProp name="rampUp">0</stringProp>
+<elementProp elementType="LoopController" enabled="true" guiclass="LoopControlPanel" name="ThreadGroup.main_controller" testclass="LoopController" testname="循环控制器">
+<boolProp name="LoopController.continue_forever">false</boolProp>
+<intProp name="LoopController.loops">-1</intProp>
+</elementProp>
+</kg.apc.jmeter.threads.SteppingThreadGroup>
       <org.apache.jorphan.collections.HashTree>
         <BeanShellListener guiclass="TestBeanGUI" testclass="BeanShellListener" testname="BeanShell Listener">
           <boolProp name="resetInterpreter">false</boolProp>
-          <stringProp name="script">log.info(&quot;This is a BeanShell Listener script execution.&quot;);</stringProp>
+          <stringProp name="script">haha</stringProp>
         </BeanShellListener>
         <org.apache.jorphan.collections.HashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="并发线程数—${thread}" enabled="true">
+        <TransactionController enabled="true" guiclass="TransactionControllerGui" testclass="TransactionController" testname="并发线程数—${thread}">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
         <org.apache.jorphan.collections.HashTree>
-          <com.hitices.pressure.entity.MyResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="collector" enabled="true">
+          <com.hitices.pressure.entity.MyResultCollector enabled="true" guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="collector">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -62,12 +66,12 @@
           </com.hitices.pressure.entity.MyResultCollector>
           <org.apache.jorphan.collections.HashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http sampler proxy">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <elementProp elementType="Arguments" name="HTTPsampler.Arguments">
               <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
+                <elementProp elementType="HTTPArgument" name="">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&quot;password&quot;:&quot;123456789&quot;,&quot;email&quot;:&quot;ianchangntt163com&quot;}</stringProp>
-                  <stringProp name="Argument.metadata"></stringProp>
+                  <stringProp name="Argument.value">{"password":"123456789","email":"ianchangntt163com"}</stringProp>
+                  <stringProp name="Argument.metadata"/>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -84,7 +88,7 @@
           <org.apache.jorphan.collections.HashTree/>
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="header manager">
             <collectionProp name="HeaderManager.headers">
-              <elementProp name="Content-Type" elementType="Header">
+              <elementProp elementType="Header" name="Content-Type">
                 <stringProp name="Header.name">Content-Type</stringProp>
                 <stringProp name="Header.value">application/json</stringProp>
               </elementProp>

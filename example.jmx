@@ -12,7 +12,8 @@
       <stringProp name="Stop users period">0</stringProp>
       <stringProp name="flighttime">3</stringProp>
       <stringProp name="rampUp">0</stringProp>
-      <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="循环控制器" enabled="true">
+      <elementProp name="ThreadGroup.main_controller" elementType="++
+      +Controller" guiclass="LoopControlPanel" testclass="LoopController" testname="循环控制器" enabled="true">
         <boolProp name="LoopController.continue_forever">false</boolProp>
         <intProp name="LoopController.loops">-1</intProp>
       </elementProp>
