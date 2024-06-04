@@ -10,13 +10,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonTypeName("SteppingThreadParam")
 public class SteppingThreadParam {
-    private double numThreads;
+    private int numThreads;
     private double initialDelay;
     private double startUsersCount;
     private double startUsersCountBurst;
     private double startUsersPeriod;
     private double stopUsersCount;
     private double stopUsersPeriod;
-    private double flighttiem;
+    private double flighttime;
     private double rampUp;
 }

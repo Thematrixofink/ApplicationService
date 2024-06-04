@@ -53,6 +53,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +65,8 @@ public class JMeterUtil {
     public static String WINDOWS_FILE_PATH = "C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\bin\\jmeter.properties";
     public static String LINUX_HOME= "/opt/jmeter/";
     public static String LINUX_FILE_PATH = "/opt/jmeter/bin/jmeter.properties";
+
+    private static String JMX_PATH = ".\\data";
 
     public static StandardJMeterEngine init(String JMeterHome, String filePath) {
 
@@ -75,7 +80,10 @@ public class JMeterUtil {
         return new StandardJMeterEngine();
     }
 
-    public static int saveTestPlan(TestPlanVO testPlanVO, PressureMeasurementService pressureMeasurementService) throws IOException {
+    public static String saveTestPlan(TestPlanVO testPlanVO, PressureMeasurementService pressureMeasurementService) throws IOException {
+
+        int planId = pressureMeasurementService.addTestPlan(testPlanVO);
+
         String system = System.getProperty("os.name");
         if(system.equals("Windows 11")) {
             init(WINDOWS_HOME, WINDOWS_FILE_PATH);
@@ -132,12 +140,24 @@ public class JMeterUtil {
             threadGroupTree.add(threadGroup, siblingTree);
         }
 
-        SaveService.saveTree(testPlanTree, new FileOutputStream(new File("data/example1.jmx")));
+        Path path = Paths.get(JMX_PATH);
 
-        return 1;
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectory(path);
+            } catch (IOException e) {
+                System.err.println("创建目录失败: " + e.getMessage());
+            }
+        }
+
+        Path jmxPath = path.resolve(planId + ".jmx");
+
+        SaveService.saveTree(testPlanTree, new FileOutputStream(jmxPath.toString()));
+
+        return jmxPath.toString();
     }
 
-    public static boolean transformJmx(SteppingThreadParam steppingThreadParam, String filePath) {
+    public static boolean transformJmx(TestPlanVO testPlanVO, String filePath) {
         try {
             File inputFile = new File(filePath);
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -145,8 +165,15 @@ public class JMeterUtil {
             Document doc = docBuilder.parse(inputFile);
             NodeList threadGroupList = doc.getElementsByTagName("ThreadGroup");
 
+            List<ThreadGroupVO> threadGroupVOList = testPlanVO.getThreadGroupList();
+            // 判断线程组的个数是否一致
+            if(threadGroupVOList.size() != threadGroupList.getLength()) {
+                return false;
+            }
+
             for (int i = 0; i < threadGroupList.getLength(); i++) {
                 Node threadGroup = threadGroupList.item(i);
+                ThreadGroupVO threadGroupVO = threadGroupVOList.get(i);
                 // 替换为新的ThreadGroup节点
                 Element newThreadGroup = doc.createElement("kg.apc.jmeter.threads.SteppingThreadGroup");
                 newThreadGroup.setAttribute("guiclass", "kg.apc.jmeter.threads.SteppingThreadGroupGui");
@@ -166,42 +193,42 @@ public class JMeterUtil {
 
                 Element initialDelay = doc.createElement("stringProp");
                 initialDelay.setAttribute("name", "Threads initial delay");
-                initialDelay.setTextContent("0");
+                initialDelay.setTextContent(String.valueOf(threadGroupVO.getInitialDelay()));
                 newThreadGroup.appendChild(initialDelay);
 
                 Element startUsersCount = doc.createElement("stringProp");
                 startUsersCount.setAttribute("name", "Start users count");
-                startUsersCount.setTextContent("10");
+                startUsersCount.setTextContent(String.valueOf(threadGroupVO.getStartUsersCount()));
                 newThreadGroup.appendChild(startUsersCount);
 
                 Element startUsersCountBurst = doc.createElement("stringProp");
                 startUsersCountBurst.setAttribute("name", "Start users count burst");
-                startUsersCountBurst.setTextContent("0");
+                startUsersCountBurst.setTextContent(String.valueOf(threadGroupVO.getStartUsersCountBurst()));
                 newThreadGroup.appendChild(startUsersCountBurst);
 
                 Element startUsersPeriod = doc.createElement("stringProp");
                 startUsersPeriod.setAttribute("name", "Start users period");
-                startUsersPeriod.setTextContent("3");
+                startUsersPeriod.setTextContent(String.valueOf(threadGroupVO.getStartUsersPeriod()));
                 newThreadGroup.appendChild(startUsersPeriod);
 
                 Element stopUsersCount = doc.createElement("stringProp");
                 stopUsersCount.setAttribute("name", "Stop users count");
-                stopUsersCount.setTextContent("30");
+                stopUsersCount.setTextContent(String.valueOf(threadGroupVO.getStopUsersCount()));
                 newThreadGroup.appendChild(stopUsersCount);
 
                 Element stopUsersPeriod = doc.createElement("stringProp");
                 stopUsersPeriod.setAttribute("name", "Stop users period");
-                stopUsersPeriod.setTextContent("0");
+                stopUsersPeriod.setTextContent(String.valueOf(threadGroupVO.getStopUsersPeriod()));
                 newThreadGroup.appendChild(stopUsersPeriod);
 
                 Element flighttime = doc.createElement("stringProp");
                 flighttime.setAttribute("name", "flighttime");
-                flighttime.setTextContent("3");
+                flighttime.setTextContent(String.valueOf(threadGroupVO.getFlighttime()));
                 newThreadGroup.appendChild(flighttime);
 
                 Element rampUp = doc.createElement("stringProp");
                 rampUp.setAttribute("name", "rampUp");
-                rampUp.setTextContent("0");
+                rampUp.setTextContent(String.valueOf(threadGroupVO.getRampUp()));
                 newThreadGroup.appendChild(rampUp);
 
                 Element threadGroupMainController = doc.createElement("elementProp");
@@ -227,7 +254,7 @@ public class JMeterUtil {
                 threadGroup.getParentNode().replaceChild(newThreadGroup, threadGroup);
             }
 
-            transformJmxForSteppingThread(doc, steppingThreadParam);
+            transformJmxForSteppingThread(doc, testPlanVO);
 
             doc.getDocumentElement().normalize();
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -243,25 +270,35 @@ public class JMeterUtil {
         return true;
     }
 
-    public static void transformJmxForSteppingThread(Document doc, SteppingThreadParam steppingThreadParam) {
+    public static void transformJmxForSteppingThread(Document doc, TestPlanVO testPlanVO) {
 
-        int gap = (int) steppingThreadParam.getStartUsersCount();
-        int max_iter = (int) steppingThreadParam.getNumThreads() / gap;
 
-        String script = String.format(
-                "import org.apache.jmeter.threads.JMeterContextService;\n" +
-                        "\n" +
-                        "int num = JMeterContextService.getNumberOfThreads();\n" +
-                        "int gap = %d;\n" +
-                        "int max_iter = %d;\n" +
-                        "for(int i=max_iter; i>=1; i--) {\n" +
-                        "\tif(num <= gap * i) {\n" +
-                        "\t\tvars.put(\"thread\",String.valueOf(gap * i));\n" +
-                        "\t}\n" +
-                        "}", gap, max_iter);
+        List<ThreadGroupVO> threadGroupVOList = testPlanVO.getThreadGroupList();
+
 
         NodeList listeners = doc.getElementsByTagName("BeanShellListener");
+        if(listeners.getLength() != threadGroupVOList.size()) {
+            return;
+        }
+
         for (int i = 0; i < listeners.getLength(); i++) {
+            ThreadGroupVO threadGroupVO = threadGroupVOList.get(i);
+
+            int gap = (int) threadGroupVO.getStartUsersCount();
+            int max_iter = threadGroupVO.getThreadNum() / gap;
+
+            String script = String.format(
+                    "import org.apache.jmeter.threads.JMeterContextService;\n" +
+                            "\n" +
+                            "int num = JMeterContextService.getNumberOfThreads();\n" +
+                            "int gap = %d;\n" +
+                            "int max_iter = %d;\n" +
+                            "for(int i=max_iter; i>=1; i--) {\n" +
+                            "\tif(num <= gap * i) {\n" +
+                            "\t\tvars.put(\"thread\",String.valueOf(gap * i));\n" +
+                            "\t}\n" +
+                            "}", gap, max_iter);
+
             Element listener = (Element) listeners.item(i);
             NodeList stringProps = listener.getElementsByTagName("stringProp");
             for (int j = 0; j < stringProps.getLength(); j++) {

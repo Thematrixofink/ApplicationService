@@ -28,6 +28,22 @@ public class ThreadGroupVO {
 
     private long delay;
 
+    private boolean stepping;
+
+    private double initialDelay;
+
+    private double startUsersCount;
+
+    private double startUsersCountBurst;
+
+    private double startUsersPeriod;
+
+    private double stopUsersCount;
+
+    private double stopUsersPeriod;
+
+    private double flighttime;
+
     private LoopControllerVO loopControllerVO;
 
     private HTTPSamplerProxyVO httpSamplerProxyVO;

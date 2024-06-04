@@ -192,7 +192,7 @@
     <insert id="insertTestPlan" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
             parameterType="com.hitices.pressure.entity.TestPlanVO">
         insert into test_plan value (null, #{testPlanName}, #{comment}, #{serialized},
-                                     #{functionalMode}, #{tearDown}, #{status}, #{namespace}, #{podName})
+                                     #{functionalMode}, #{tearDown}, #{status}, #{namespace}, #{podName}, #{isBoundary})
     </insert>
     <insert id="insertTestResult" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.hitices.pressure.entity.TestResultVO">
         insert into test_result value (null, #{planId}, #{timestamp}, #{startTime}, #{endTime}, #{idleTime}, #{pauseTime}, #{connectTime}, #{latency}, #{success}, #{responseCode}, #{responseData}, #{responseMessage}, #{responseHeaders}, #{bytes}, #{headersSize}, #{bodySize}, #{sentBytes})
@@ -201,8 +201,10 @@
         insert into thread_group values
         <foreach collection="threadGroups" item="threadGroup" separator=",">
             (null,#{threadGroup.testPlanId},#{threadGroup.threadGroupName},#{threadGroup.comment},
-            #{threadGroup.threadNum},#{threadGroup.rampUp},#{threadGroup.delay},
-            #{threadGroup.scheduler},#{threadGroup.duration})
+            #{threadGroup.threadNum},#{threadGroup.rampUp},#{threadGroup.delay},#{threadGroup.scheduler},
+            #{threadGroup.duration},#{threadGroup.stepping},#{threadGroup.initialDelay},
+            #{threadGroup.startUsersCount},#{threadGroup.startUsersCountBurst},#{threadGroup.startUsersPeriod},
+            #{threadGroup.stopUsersCount},#{threadGroup.stopUsersPeriod},#{threadGroup.flighttime})
         </foreach>
     </insert>
     <insert id="insertHTTPSamplerProxyList" useGeneratedKeys="true" keyProperty="id">

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hitices.pressure.entity.*;
 import org.apache.jmeter.samplers.SampleResult;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface PressureMeasurementService {
@@ -26,7 +27,7 @@ public interface PressureMeasurementService {
 
     int addTestPlan(TestPlanVO testPlan);
 
-    int addBoundaryTestPlan(TestPlanVO testPlan);
+    int addBoundaryTestPlan(TestPlanVO testPlan) throws IOException;
 
     void updateTestPlan(TestPlanVO testPlanVO);
 

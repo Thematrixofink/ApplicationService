@@ -8,12 +8,13 @@ import com.hitices.pressure.common.MeasureThread;
 import com.hitices.pressure.entity.*;
 import com.hitices.pressure.repository.PressureMeasurementMapper;
 import com.hitices.pressure.service.PressureMeasurementService;
+import com.hitices.pressure.utils.JMeterUtil;
 import org.apache.jmeter.samplers.SampleResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -235,15 +236,19 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
         pressureMeasurementMapper.insertTestPlan(testPlan);
         testPlan.getThreadGroupList().forEach(threadGroupVO -> threadGroupVO.setTestPlanId(testPlan.getId()));
         saveThreadGroups(testPlan.getThreadGroupList());
-        return 1;
+        return testPlan.getId();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int addBoundaryTestPlan(TestPlanVO testPlan) {
-        testPlan.setStatus("Created");
+    public int addBoundaryTestPlan(TestPlanVO testPlan) throws IOException {
 
-        return 1;
+        testPlan.setStatus("Created");
+        String jmxPath = JMeterUtil.saveTestPlan(testPlan, this);
+        if(JMeterUtil.transformJmx(testPlan, jmxPath)) {
+            return 1;
+        }
+        return 0;
     }
 
     @Transactional(rollbackFor = Exception.class)
