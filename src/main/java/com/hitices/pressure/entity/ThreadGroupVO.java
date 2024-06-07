@@ -30,19 +30,19 @@ public class ThreadGroupVO {
 
     private boolean stepping;
 
-    private double initialDelay;
+    private int initialDelay;
 
-    private double startUsersCount;
+    private int startUsersCount;
 
-    private double startUsersCountBurst;
+    private int startUsersCountBurst;
 
-    private double startUsersPeriod;
+    private int startUsersPeriod;
 
-    private double stopUsersCount;
+    private int stopUsersCount;
 
-    private double stopUsersPeriod;
+    private int stopUsersPeriod;
 
-    private double flighttime;
+    private int flighttime;
 
     private LoopControllerVO loopControllerVO;
 

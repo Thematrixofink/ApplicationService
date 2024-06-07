@@ -1,16 +1,16 @@
 package com.hitices.pressure.utils;
 
+import com.hitices.pressure.common.AggregateReport;
+import com.hitices.pressure.common.MyResultCollector;
 import com.hitices.pressure.entity.*;
 import com.hitices.pressure.service.PressureMeasurementService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jmeter.config.Argument;
 import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.config.ConfigTestElement;
-import org.apache.jmeter.config.gui.ArgumentsPanel;
 import org.apache.jmeter.control.LoopController;
 import org.apache.jmeter.control.TransactionController;
 import org.apache.jmeter.control.gui.LoopControlPanel;
-import org.apache.jmeter.control.gui.TestPlanGui;
 import org.apache.jmeter.engine.StandardJMeterEngine;
 import org.apache.jmeter.protocol.http.control.Header;
 import org.apache.jmeter.protocol.http.control.HeaderManager;
@@ -31,14 +31,13 @@ import org.apache.jmeter.timers.gui.PoissonRandomTimerGui;
 import org.apache.jmeter.timers.gui.UniformRandomTimerGui;
 import org.apache.jmeter.util.JMeterUtils;
 import org.apache.jmeter.visualizers.BeanShellListener;
-import org.apache.jmeter.visualizers.ViewResultsFullVisualizer;
+import org.apache.jmeter.visualizers.StatVisualizer;
 import org.apache.jorphan.collections.HashTree;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import ucar.units.Test;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,7 +49,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -110,7 +108,7 @@ public class JMeterUtil {
             //创建http信息头管理器
             HeaderManager headerManager = JMeterUtil.createHeaderManager(threadGroupVO.getHeaderManagerVO());
 
-            ResultCollector resultCollector = JMeterUtil.createResultCollector(pressureMeasurementService, testPlanVO.getId());
+            AggregateReport aggregateReport = JMeterUtil.createAggregateReport(pressureMeasurementService, planId);
 
             BeanShellListener beanShellListener = new BeanShellListener();
             beanShellListener.setName("BeanShell Listener");
@@ -135,7 +133,7 @@ public class JMeterUtil {
             transactionControllerHashTree.add(httpSamplerProxy);
             transactionControllerHashTree.add(headerManager);
             JMeterUtil.addTimers(transactionControllerHashTree, threadGroupVO.getTimers());
-            transactionControllerHashTree.add(resultCollector);
+            transactionControllerHashTree.add(aggregateReport);
 
             threadGroupTree.add(threadGroup, siblingTree);
         }
@@ -183,7 +181,7 @@ public class JMeterUtil {
 
                 Element numThreads = doc.createElement("stringProp");
                 numThreads.setAttribute("name", "ThreadGroup.num_threads");
-                numThreads.setTextContent("40");
+                numThreads.setTextContent(String.valueOf(threadGroupVO.getThreadNum()));
                 newThreadGroup.appendChild(numThreads);
 
                 Element onSampleError = doc.createElement("stringProp");
@@ -261,7 +259,7 @@ public class JMeterUtil {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(new File("output.jmx"));
+            StreamResult result = new StreamResult(new File(filePath));
             transformer.transform(source, result);
         } catch (ParserConfigurationException | SAXException | TransformerException | IOException e) {
             e.printStackTrace();
@@ -284,7 +282,7 @@ public class JMeterUtil {
         for (int i = 0; i < listeners.getLength(); i++) {
             ThreadGroupVO threadGroupVO = threadGroupVOList.get(i);
 
-            int gap = (int) threadGroupVO.getStartUsersCount();
+            int gap = threadGroupVO.getStartUsersCount();
             int max_iter = threadGroupVO.getThreadNum() / gap;
 
             String script = String.format(
@@ -293,11 +291,13 @@ public class JMeterUtil {
                             "int num = JMeterContextService.getNumberOfThreads();\n" +
                             "int gap = %d;\n" +
                             "int max_iter = %d;\n" +
-                            "for(int i=max_iter; i>=1; i--) {\n" +
+                            "for(int i=1; i<=max_iter; i++) {\n" +
                             "\tif(num <= gap * i) {\n" +
                             "\t\tvars.put(\"thread\",String.valueOf(gap * i));\n" +
+                            "\t\tbreak;\n" +
                             "\t}\n" +
-                            "}", gap, max_iter);
+                            "}", gap, max_iter
+            );
 
             Element listener = (Element) listeners.item(i);
             NodeList stringProps = listener.getElementsByTagName("stringProp");
@@ -434,16 +434,29 @@ public class JMeterUtil {
     }
 
     public static ResultCollector createResultCollector(PressureMeasurementService service, int planId) {
+
         Summariser summer = new Summariser();
         MyResultCollector resultCollector = new MyResultCollector(summer, planId);
         resultCollector.setName("collector");
         resultCollector.setPressureMeasurementService(service);
         resultCollector.setProperty(TestElement.TEST_CLASS, ResultCollector.class.getName());
-        resultCollector.setProperty(TestElement.GUI_CLASS, ViewResultsFullVisualizer.class.getName());
+        resultCollector.setProperty(TestElement.GUI_CLASS, StatVisualizer.class.getName());
         resultCollector.setFilename("./test.jtl");
         resultCollector.setEnabled(true);
 
         return resultCollector;
+    }
+
+    public static AggregateReport createAggregateReport(PressureMeasurementService service, int planId) {
+        Summariser summer = new Summariser();
+        AggregateReport aggregateReport = new AggregateReport(summer, planId);
+        aggregateReport.setName("aggregate report");
+        aggregateReport.setPressureMeasurementService(service);
+        aggregateReport.setProperty(TestElement.TEST_CLASS, ResultCollector.class.getName());
+        aggregateReport.setProperty(TestElement.GUI_CLASS, StatVisualizer.class.getName());
+        aggregateReport.setFilename("./test.jtl");
+        aggregateReport.setEnabled(true);
+        return aggregateReport;
     }
 
     public static void addTimers(HashTree threadGroupTree, List<TimerVO> timers) {

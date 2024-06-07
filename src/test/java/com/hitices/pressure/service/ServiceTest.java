@@ -2,6 +2,7 @@ package com.hitices.pressure.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hitices.pressure.entity.TestPlanVO;
+import com.hitices.pressure.entity.ThreadGroupVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -47,9 +49,25 @@ public class ServiceTest {
 
     @Test
     public void testForSaveConfig() throws IOException, ParserConfigurationException, SAXException {
-        TestPlanVO testPlanVO = pressureMeasurementService.getTestPlanById(15);
-        System.out.println(testPlanVO.getStatus());
-        JMeterUtil.saveTestPlan(testPlanVO, pressureMeasurementService);
+        TestPlanVO testPlanVO = pressureMeasurementService.getTestPlanById(29);
+        testPlanVO.setBoundary(true);
+        List<ThreadGroupVO> threadGroupVOList = testPlanVO.getThreadGroupList();
+
+        for(ThreadGroupVO threadGroupVO: threadGroupVOList) {
+            threadGroupVO.setStepping(true);
+            threadGroupVO.setInitialDelay(0);
+            threadGroupVO.setStartUsersCount(10);
+            threadGroupVO.setStartUsersCountBurst(0);
+            threadGroupVO.setStartUsersPeriod(10);
+            threadGroupVO.setThreadNum(100);
+            threadGroupVO.setStopUsersCount(100);
+            threadGroupVO.setStopUsersPeriod(0);
+            threadGroupVO.setFlighttime(10);
+            threadGroupVO.setRampUp(0);
+        }
+
+        pressureMeasurementService.addBoundaryTestPlan(testPlanVO);
+
     }
 
     @Test

@@ -1,13 +1,11 @@
-package com.hitices.pressure.entity;
+package com.hitices.pressure.common;
 
+import com.hitices.pressure.entity.TestResultVO;
 import com.hitices.pressure.service.PressureMeasurementService;
 import org.apache.jmeter.reporters.ResultCollector;
 import org.apache.jmeter.reporters.Summariser;
 import org.apache.jmeter.samplers.SampleEvent;
 import org.apache.jmeter.samplers.SampleResult;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
@@ -33,13 +31,6 @@ public class MyResultCollector extends ResultCollector {
     public void sampleOccurred(SampleEvent event){
         super.sampleOccurred(event);
         SampleResult result = event.getResult();
-//        System.out.println("result:"+result);
-//        System.out.println("message:"+result.getResponseMessage());
-//        System.out.println("data:"+result.getSamplerData());
-//        System.out.println("code:"+result.getResponseCode());
-//        System.out.println("response data:"+result.getResponseDataAsString());
-//        System.out.println("request headers:"+result.getRequestHeaders());
-
         TestResultVO testResultVO = new TestResultVO(0,
                 planId,
                 new Date(result.getTimeStamp()),
@@ -60,5 +51,10 @@ public class MyResultCollector extends ResultCollector {
                 result.getSentBytes());
 
         pressureMeasurementService.addTestResult(testResultVO);
+    }
+
+    @Override
+    public void sampleStopped(SampleEvent e) {
+
     }
 }

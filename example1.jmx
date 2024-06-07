@@ -25,7 +25,7 @@
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
         <org.apache.jorphan.collections.HashTree>
-          <com.hitices.pressure.entity.MyResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="collector" enabled="true">
+          <com.hitices.pressure.common.MyResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="collector" enabled="true">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -59,7 +59,7 @@
               </value>
             </objProp>
             <stringProp name="filename">./test.jtl</stringProp>
-          </com.hitices.pressure.entity.MyResultCollector>
+          </com.hitices.pressure.common.MyResultCollector>
           <org.apache.jorphan.collections.HashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http sampler proxy">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">

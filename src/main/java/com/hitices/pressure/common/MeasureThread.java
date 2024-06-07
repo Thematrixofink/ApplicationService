@@ -59,16 +59,6 @@ public class MeasureThread implements Runnable {
                 HeaderManager headerManager = JMeterUtil.createHeaderManager(threadGroupVO.getHeaderManagerVO());
 
                 ResultCollector resultCollector = JMeterUtil.createResultCollector(pressureMeasurementService, testPlanVO.getId());
-//                Summariser summer = new Summariser();
-//                SummaryReport summaryReport = new SummaryReport();
-//                ViewResultsFullVisualizer v = new ViewResultsFullVisualizer();
-//                ResultCollector resultCollector = new ResultCollector(summer);
-//                resultCollector.setName("collector");
-//                resultCollector.setProperty(TestElement.TEST_CLASS, ResultCollector.class.getName());
-//                resultCollector.setProperty(TestElement.GUI_CLASS, ViewResultsFullVisualizer.class.getName());
-//                resultCollector.setEnabled(true);
-//                resultCollector.setFilename("result\\result.jtl");
-
 
                 threadGroupTree.add(httpSamplerProxy);
                 threadGroupTree.add(headerManager);
@@ -79,11 +69,7 @@ public class MeasureThread implements Runnable {
             }
 
             tree.add(testPlan, testPlanTree);
-//            try {
-//                SaveService.saveTree(tree, new FileOutputStream("result\\test.jmx"));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+
             standardJMeterEngine.configure(tree);
             standardJMeterEngine.run();
 

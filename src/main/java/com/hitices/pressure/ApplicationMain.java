@@ -1,6 +1,6 @@
 package com.hitices.pressure;
 
-import com.hitices.pressure.entity.MyResultCollector;
+import com.hitices.pressure.common.MyResultCollector;
 import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.config.gui.ArgumentsPanel;
 import org.apache.jmeter.control.LoopController;

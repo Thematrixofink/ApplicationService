@@ -184,8 +184,15 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
         } catch (Exception e) {
             return false;
         }
+    }
 
-
+    @Override
+    public boolean addAggregateReport(AggregateReportVO aggregateReportVO) {
+        int res = pressureMeasurementMapper.insertAggregateReport(aggregateReportVO);
+        if(res <= 0) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -357,7 +364,12 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
             if (headerManagerVOList.size() > 0) pressureMeasurementMapper.insertHeaderManagerList(headerManagerVOList);
             if (cookieManagerVOList.size() > 0) pressureMeasurementMapper.insertCookieManagerList(cookieManagerVOList);
 
-            addTimers(threadGroup.getTimers(), threadGroup.getId());
+            // 添加定时器
+            List<TimerVO> timerVOList = threadGroup.getTimers();
+            if(timerVOList.size() > 0){
+                addTimers(timerVOList, threadGroup.getId());
+            }
+
         }
     }
 

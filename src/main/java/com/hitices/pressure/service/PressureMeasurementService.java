@@ -39,6 +39,8 @@ public interface PressureMeasurementService {
 
     boolean addAggregateReport(int planId);
 
+    boolean addAggregateReport(AggregateReportVO aggregateReportVO);
+
     List<TestResultVO> getTestResultsByPlanId(int planId);
 
     TestResultVO getTestResultByResultId(int testResultId);
