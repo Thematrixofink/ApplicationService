@@ -24,7 +24,7 @@ public class TestMeasureController {
 
     @GetMapping("/getSystem")
     public MResponse<String> getSystem() {
-        System.out.println("Received");
+//        System.out.println("Received");
         return new MResponse<String>().successMResponse().data(System.getProperty("os.name"));
     }
 }

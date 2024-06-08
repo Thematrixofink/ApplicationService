@@ -190,4 +190,10 @@ public class ServiceTest {
     public void testGetStartAndEnd() {
         System.out.println(pressureMeasurementService.getStartAndEndOfTest(17)[0]);
     }
+
+
+    @Test
+    public void testForBoundaryTest() throws JsonProcessingException {
+        pressureMeasurementService.measure(38);
+    }
 }

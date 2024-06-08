@@ -3,6 +3,8 @@ package com.hitices.pressure.common;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.util.Calculator;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -14,22 +16,26 @@ public class PercentageCalculator extends Calculator {
 
     public PercentageCalculator() {
         super();
+        responseTimes = new ArrayList<>();
     }
 
     public PercentageCalculator(String label) {
         super(label);
+        responseTimes = new ArrayList<>();
     }
 
     @Override
     public void addSample(SampleResult res) {
         super.addSample(res);
-        responseTimes.add(res.getTime());
+        synchronized (responseTimes) {
+            responseTimes.add(res.getTime());
+        }
     }
 
     @Override
     public void clear() {
         super.clear();
-        responseTimes.clear();
+//        responseTimes.clear();
     }
 
 
@@ -38,7 +44,7 @@ public class PercentageCalculator extends Calculator {
         Collections.sort(responseTimes);
         for(int i = 0; i < tileList.length; i++) {
             double tile = tileList[i];
-            int index = (int) Math.ceil((tile / 100.0) * responseTimes.size());
+            int index = (int) (tile * responseTimes.size());
             res[i] =  responseTimes.get(index - 1);
         }
         return res;

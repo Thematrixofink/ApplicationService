@@ -64,7 +64,8 @@ public class JMeterUtil {
     public static String LINUX_HOME= "/opt/jmeter/";
     public static String LINUX_FILE_PATH = "/opt/jmeter/bin/jmeter.properties";
 
-    private static String JMX_PATH = ".\\data";
+    public static String JMX_PATH = "./conf";
+    public static String RES_PATH = "./result";
 
     public static StandardJMeterEngine init(String JMeterHome, String filePath) {
 
@@ -108,7 +109,7 @@ public class JMeterUtil {
             //创建http信息头管理器
             HeaderManager headerManager = JMeterUtil.createHeaderManager(threadGroupVO.getHeaderManagerVO());
 
-            AggregateReport aggregateReport = JMeterUtil.createAggregateReport(pressureMeasurementService, planId);
+            AggregateReport aggregateReport = JMeterUtil.createAggregateReport(planId);
 
             BeanShellListener beanShellListener = new BeanShellListener();
             beanShellListener.setName("BeanShell Listener");
@@ -118,7 +119,7 @@ public class JMeterUtil {
             beanShellListener.setProperty("script", "log.info(\"This is a BeanShell Listener script execution.\");");
 
             TransactionController transactionController = new TransactionController();
-            transactionController.setName("并发线程数—${thread}");
+            transactionController.setName(String.format("并发线程数-%d-${thread}", planId));
             transactionController.setEnabled(true);
             transactionController.setProperty("TransactionController.includeTimers", false);
             transactionController.setProperty("TransactionController.parent", false);
@@ -447,11 +448,11 @@ public class JMeterUtil {
         return resultCollector;
     }
 
-    public static AggregateReport createAggregateReport(PressureMeasurementService service, int planId) {
+    public static AggregateReport createAggregateReport(int planId) {
         Summariser summer = new Summariser();
         AggregateReport aggregateReport = new AggregateReport(summer, planId);
         aggregateReport.setName("aggregate report");
-        aggregateReport.setPressureMeasurementService(service);
+//        aggregateReport.setPressureMeasurementService(service);
         aggregateReport.setProperty(TestElement.TEST_CLASS, ResultCollector.class.getName());
         aggregateReport.setProperty(TestElement.GUI_CLASS, StatVisualizer.class.getName());
         aggregateReport.setFilename("./test.jtl");

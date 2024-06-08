@@ -4,17 +4,32 @@ import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hitices.pressure.common.BoundaryTestThread;
+import com.hitices.pressure.common.MResponse;
 import com.hitices.pressure.common.MeasureThread;
 import com.hitices.pressure.entity.*;
 import com.hitices.pressure.repository.PressureMeasurementMapper;
 import com.hitices.pressure.service.PressureMeasurementService;
 import com.hitices.pressure.utils.JMeterUtil;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.jmeter.engine.StandardJMeterEngine;
 import org.apache.jmeter.samplers.SampleResult;
+import org.apache.jmeter.save.SaveService;
+import org.apache.jmeter.util.JMeterUtils;
+import org.apache.jorphan.collections.HashTree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -26,18 +41,66 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
     private PressureMeasurementMapper pressureMeasurementMapper;
 
     @Override
-    public void measure(TestPlanVO testPlanVO) {
-        MeasureThread measureThread = new MeasureThread(testPlanVO, this);
-        Thread thread = new Thread(measureThread);
-        thread.start();
-        testPlanVO.setStatus("Running");
-        pressureMeasurementMapper.updateTestPlan(testPlanVO);
+    public boolean commonMeasure(TestPlanVO testPlanVO) {
+        try {
+            MeasureThread measureThread = new MeasureThread(testPlanVO, this);
+            Thread thread = new Thread(measureThread);
+            thread.start();
+            testPlanVO.setStatus("Running");
+            pressureMeasurementMapper.updateTestPlan(testPlanVO);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public void measure(int testPlanId) throws JsonProcessingException {
+    public boolean boundaryMeasure(TestPlanVO testPlanVO) {
+        Path path = Paths.get(JMeterUtil.JMX_PATH);
+        Path jmxPath = path.resolve(testPlanVO.getId() + ".jmx");
+        if (!Files.exists(path) || !Files.exists(jmxPath)) {
+            return false;
+        }
+//        try {
+//            BoundaryTestThread boundaryTestThread = new BoundaryTestThread(testPlanVO);
+//            Thread thread = new Thread(boundaryTestThread);
+//            thread.start();
+//            testPlanVO.setStatus("Running");
+//            pressureMeasurementMapper.updateTestPlan(testPlanVO);
+//            return true;
+//        } catch (Exception e) {
+//            return false;
+//        }
+
+        try {
+
+            StandardJMeterEngine standardJMeterEngine;
+            if(System.getProperty("os.name").equals("Windows 11")) {
+                standardJMeterEngine = JMeterUtil.init(JMeterUtil.WINDOWS_HOME, JMeterUtil.WINDOWS_FILE_PATH);
+            } else {
+                standardJMeterEngine = JMeterUtil.init(JMeterUtil.LINUX_HOME, JMeterUtil.LINUX_FILE_PATH);
+            }
+            File jmxFile = new File(jmxPath.toString());
+            HashTree testPlanTree = SaveService.loadTree(jmxFile);
+
+            standardJMeterEngine.configure(testPlanTree);
+            standardJMeterEngine.run();
+            testPlanVO.setStatus("Completed");
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean measure(int testPlanId) throws JsonProcessingException {
         TestPlanVO testPlanVO = getTestPlanById(testPlanId);
-        measure(testPlanVO);
+        if (testPlanVO.isBoundary()) {
+            return boundaryMeasure(testPlanVO);
+        } else {
+            return commonMeasure(testPlanVO);
+        }
     }
 
     @Override
@@ -182,6 +245,7 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
             }
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -408,6 +472,49 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
     private <concreteTimer extends TimerVO> void fillTimer(concreteTimer concreteTimer, TimerVO timer) {
         concreteTimer.setThreadGroupId(timer.getThreadGroupId());
         concreteTimer.setTimerType(timer.getTimerType());
+    }
+
+    public List<AggregateReportVO> getBoundaryTestResult(int planId) {
+        Path resultDir = Paths.get(JMeterUtil.RES_PATH);
+        Path resultFile = resultDir.resolve(planId + ".csv");
+        if (!Files.exists(resultDir) || !Files.exists(resultFile)) {
+            return  null;
+        }
+        List<AggregateReportVO> aggregateReportVOList = new ArrayList<>();
+        try (Reader reader = new FileReader(resultFile.toString());
+             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT)) {
+            for (CSVRecord csvRecord : csvParser) {
+                // 获取每一行的数据
+                String numThreads = csvRecord.get(0);
+                String numSamples = csvRecord.get(1);
+                String mean = csvRecord.get(2);
+                String median = csvRecord.get(3);
+                String min = csvRecord.get(4);
+                String max = csvRecord.get(5);
+                String percent90 = csvRecord.get(6);
+                String percent95 = csvRecord.get(7);
+                String percent99 = csvRecord.get(8);
+                String tps = csvRecord.get(9);
+                String errorRate = csvRecord.get(10);
+                aggregateReportVOList.add(
+                        new AggregateReportVO(
+                                Integer.valueOf(numThreads),
+                                planId,
+                                Double.valueOf(numSamples),
+                                Double.valueOf(mean),
+                                Double.valueOf(median),
+                                Double.valueOf(min),
+                                Double.valueOf(max),
+                                Double.valueOf(percent90),
+                                Double.valueOf(percent95),
+                                Double.valueOf(percent99),
+                                Double.valueOf(tps),
+                                Double.valueOf(errorRate)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return aggregateReportVOList;
     }
 
 

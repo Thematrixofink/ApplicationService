@@ -9,9 +9,11 @@ import java.util.List;
 
 public interface PressureMeasurementService {
 
-    void measure(TestPlanVO testPlanVO);
+    boolean commonMeasure(TestPlanVO testPlanVO);
 
-    void measure(int testPlanId) throws JsonProcessingException;
+    boolean boundaryMeasure(TestPlanVO testPlanVO);
+
+    boolean measure(int testPlanId) throws JsonProcessingException;
 
     void addResults(SampleResult result);
 
@@ -46,5 +48,7 @@ public interface PressureMeasurementService {
     TestResultVO getTestResultByResultId(int testResultId);
 
     int[] getStartAndEndOfTest(int planId);
+
+    List<AggregateReportVO> getBoundaryTestResult(int planId);
 
 }
