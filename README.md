@@ -5,7 +5,7 @@
 ## Installation and Running
 1. Clone the repository:
 ```
-git clone https://github.com/your_username/your_microservice.git
+git clone https://github.com/HIT-ICES/ApplicationService.git
 ```
 2. Navigate to the project directory:
 ```
