@@ -28,7 +28,7 @@ public class TestPlanVO {
 
     private String podName;
 
-    private boolean isBoundary;
+    private boolean boundary;
 
     private List<ThreadGroupVO> threadGroupList;
 }

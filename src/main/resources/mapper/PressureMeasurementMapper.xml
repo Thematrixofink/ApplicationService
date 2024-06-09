@@ -192,7 +192,7 @@
     <insert id="insertTestPlan" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
             parameterType="com.hitices.pressure.entity.TestPlanVO">
         insert into test_plan value (null, #{testPlanName}, #{comment}, #{serialized},
-                                     #{functionalMode}, #{tearDown}, #{status}, #{namespace}, #{podName}, #{isBoundary})
+                                     #{functionalMode}, #{tearDown}, #{status}, #{namespace}, #{podName}, #{boundary})
     </insert>
     <insert id="insertTestResult" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.hitices.pressure.entity.TestResultVO">
         insert into test_result value (null, #{planId}, #{timestamp}, #{startTime}, #{endTime}, #{idleTime}, #{pauseTime}, #{connectTime}, #{latency}, #{success}, #{responseCode}, #{responseData}, #{responseMessage}, #{responseHeaders}, #{bytes}, #{headersSize}, #{bodySize}, #{sentBytes})

@@ -23,23 +23,26 @@ public class BoundaryTestThread implements Runnable {
 
     private String system;
 
-    public BoundaryTestThread(TestPlanVO testPlanVO) {
+    private String jmxPath;
+
+    public BoundaryTestThread(TestPlanVO testPlanVO, String jmxPath) {
         this.testPlanVO = testPlanVO;
         this.system = System.getProperty("os.name");
+        this.jmxPath = jmxPath;
     }
 
     @Override
     public void run() {
         try {
-            File jmxFile = new File("C:\\Users\\91512\\Desktop\\jp@gc - Stepping Thread Group.jmx");
-            HashTree testPlanTree = SaveService.loadTree(jmxFile);
-
             StandardJMeterEngine standardJMeterEngine;
             if(this.system.equals("Windows 11")) {
                 standardJMeterEngine = JMeterUtil.init(JMeterUtil.WINDOWS_HOME, JMeterUtil.WINDOWS_FILE_PATH);
             } else {
                 standardJMeterEngine = JMeterUtil.init(JMeterUtil.LINUX_HOME, JMeterUtil.LINUX_FILE_PATH);
             }
+
+            File jmxFile = new File(this.jmxPath);
+            HashTree testPlanTree = SaveService.loadTree(jmxFile);
 
             standardJMeterEngine.configure(testPlanTree);
             standardJMeterEngine.run();

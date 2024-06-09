@@ -139,7 +139,10 @@ public class PressureMeasurementController {
   public MResponse<int[]> getStartAndEndOfTest(int planId) {
     int[] startAndEnd = pressureMeasurementService.getStartAndEndOfTest(planId);
     if (startAndEnd[0] == -1) {
-      return new MResponse<int[]>().failedMResponse().data(null);
+      return new MResponse<int[]>()
+          .failedMResponse()
+          .setStatus("No available test samples, please execute the test.")
+          .data(null);
     }
     return new MResponse<int[]>().successMResponse().data(startAndEnd);
   }
@@ -173,8 +176,11 @@ public class PressureMeasurementController {
   @GetMapping("/getBoundaryTestResult")
   public MResponse<List<AggregateReportVO>> getBoundaryTestResult(int planId) {
     List<AggregateReportVO> resultList = pressureMeasurementService.getBoundaryTestResult(planId);
-    if(resultList == null) {
-      return new MResponse().failedMResponse();
+    if (resultList == null) {
+      return new MResponse<List<AggregateReportVO>>()
+          .setStatus("No available test samples, please execute the test.")
+          .failedMResponse()
+          .data(null);
     }
     return new MResponse<List<AggregateReportVO>>().successMResponse().data(resultList);
   }
