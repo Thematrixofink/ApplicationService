@@ -144,7 +144,7 @@ public class AggregateReport extends ResultCollector {
         sj.add(String.valueOf(aggregateReportVO.getSamplesNum()));
         sj.add(String.valueOf(aggregateReportVO.getAverage()));
         sj.add(String.valueOf(aggregateReportVO.getMedian()));
-        sj.add(String.valueOf(aggregateReportVO.getP50()));
+        sj.add(String.valueOf(aggregateReportVO.getP90()));
         sj.add(String.valueOf(aggregateReportVO.getP95()));
         sj.add(String.valueOf(aggregateReportVO.getP99()));
         sj.add(String.valueOf(aggregateReportVO.getMin()));

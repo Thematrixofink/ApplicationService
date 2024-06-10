@@ -58,9 +58,9 @@ public class ExcelGenerator {
         cell25.setCellValue(aggregateReportVO.getMax());
 
         Cell cell16 = labelRow.createCell(5);
-        cell16.setCellValue("P50");
+        cell16.setCellValue("p90");
         Cell cell26 = valueRow.createCell(5);
-        cell26.setCellValue(aggregateReportVO.getP50());
+        cell26.setCellValue(aggregateReportVO.getP90());
 
         Cell cell17 = labelRow.createCell(6);
         cell17.setCellValue("P95");

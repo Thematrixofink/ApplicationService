@@ -216,7 +216,7 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
               .reduce(
                   0, (result, item) -> result + (item.isSuccess() ? 0 : 1), (i1, i2) -> i1 + i2);
       double median = calculateMedian(resultList);
-      double p50 = calculatePercentile(resultList, 50);
+      double p90 = calculatePercentile(resultList, 50);
       double p95 = calculatePercentile(resultList, 95);
       double p99 = calculatePercentile(resultList, 99);
       aggregateReportVO.setSamplesNum(samplesNum);
@@ -225,7 +225,7 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
       aggregateReportVO.setMax(max);
       aggregateReportVO.setMin(min);
       aggregateReportVO.setMedian(median);
-      aggregateReportVO.setP50(p50);
+      aggregateReportVO.setP90(p90);
       aggregateReportVO.setP95(p95);
       aggregateReportVO.setP99(p99);
       aggregateReportVO.setPlanId(planId);

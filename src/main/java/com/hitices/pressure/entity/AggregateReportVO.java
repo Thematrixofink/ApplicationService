@@ -18,7 +18,7 @@ public class AggregateReportVO {
     private double median;
     private double min;
     private double max;
-    private double p50;
+    private double p90;
     private double p95;
     private double p99;
     private double tps;

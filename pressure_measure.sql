@@ -29,7 +29,7 @@ CREATE TABLE `aggregate_report`  (
   `median` double NULL DEFAULT NULL,
   `min` double NULL DEFAULT NULL,
   `max` double NULL DEFAULT NULL,
-  `p50` double NULL DEFAULT NULL,
+  `p90` double NULL DEFAULT NULL,
   `p95` double NULL DEFAULT NULL,
   `p99` double NULL DEFAULT NULL,
   `tps` double NULL DEFAULT NULL,
