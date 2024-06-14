@@ -315,4 +315,12 @@
             error_rate = #{errorRate}
         where plan_id = #{planId}
     </update>
+    <update id="updatePlanStatus" parameterType="java.util.List">
+        update test_plan
+        set status = 'Completed'
+        where id in
+        <foreach collection="plans" item="plan" open="(" separator="," close=")">
+            #{plan}
+        </foreach>
+    </update>
 </mapper>

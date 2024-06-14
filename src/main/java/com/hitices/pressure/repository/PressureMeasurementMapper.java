@@ -74,4 +74,6 @@ public interface PressureMeasurementMapper {
     List<TestResultVO> getTestResultsByPlanId(@Param("planId") int testPlanId);
 
     TestResultVO getTestResultByResultId(@Param("testResultId") int testResultId);
+
+    int updatePlanStatus(@Param("plans") List<Integer> plans);
 }

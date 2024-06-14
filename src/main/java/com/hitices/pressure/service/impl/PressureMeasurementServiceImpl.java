@@ -20,6 +20,7 @@ import org.apache.jmeter.save.SaveService;
 import org.apache.jmeter.util.JMeterUtils;
 import org.apache.jorphan.collections.HashTree;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +29,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 @Service
@@ -532,5 +535,20 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
       e.printStackTrace();
     }
     return aggregateReportVOList;
+  }
+
+
+  @Scheduled(fixedRate = 60000)
+  public void batchUpdateStatusForBoundaryTest() {
+    File[] files = new File(JMeterUtil.RES_PATH).listFiles();
+    List<Integer> plans = new ArrayList<>();
+    if (files != null) {
+      for(File file : files) {
+        String fileName = file.getName();
+        String planId = fileName.substring(0, fileName.indexOf("."));;
+        plans.add(Integer.valueOf(planId));
+      }
+    }
+    pressureMeasurementMapper.updatePlanStatus(plans);
   }
 }
