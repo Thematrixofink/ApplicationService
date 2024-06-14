@@ -506,11 +506,11 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
         String numSamples = csvRecord.get(1);
         String mean = csvRecord.get(2);
         String median = csvRecord.get(3);
-        String min = csvRecord.get(4);
-        String max = csvRecord.get(5);
-        String percent90 = csvRecord.get(6);
-        String percent95 = csvRecord.get(7);
-        String percent99 = csvRecord.get(8);
+        String percent90 = csvRecord.get(4);
+        String percent95 = csvRecord.get(5);
+        String percent99 = csvRecord.get(6);
+        String min = csvRecord.get(7);
+        String max = csvRecord.get(8);
         String tps = csvRecord.get(9);
         String errorRate = csvRecord.get(10);
         aggregateReportVOList.add(

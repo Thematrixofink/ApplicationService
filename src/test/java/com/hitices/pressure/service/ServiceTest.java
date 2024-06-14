@@ -190,7 +190,7 @@ public class ServiceTest {
 
   @Test
   public void testForBoundaryTest() throws JsonProcessingException {
-    pressureMeasurementService.measure(38);
+    pressureMeasurementService.measure(41);
   }
 
   @Test
