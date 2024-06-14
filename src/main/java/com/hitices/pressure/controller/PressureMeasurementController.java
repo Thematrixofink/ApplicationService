@@ -173,6 +173,24 @@ public class PressureMeasurementController {
     }
   }
 
+  @PostMapping("/boundaryExcel")
+  public ResponseEntity<InputStreamResource> generateBoundaryExcel(@RequestParam int planId) throws IOException {
+    List<AggregateReportVO> aggregateReportVOList = pressureMeasurementService.getBoundaryTestResult(planId);
+    InputStream inputStream =
+            ExcelGenerator.generateBoundaryExcel(aggregateReportVOList.subList(0, aggregateReportVOList.size() - 1));
+    if (inputStream != null) {
+      InputStreamResource resource = new InputStreamResource(inputStream);
+
+      return ResponseEntity.ok()
+              .contentType(MediaType.APPLICATION_OCTET_STREAM)
+              .contentLength(inputStream.available())
+              .body(resource);
+    } else {
+      // 处理InputStream为null的情况，可以返回适当的错误响应
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+    }
+  }
+
   @GetMapping("/getBoundaryTestResult")
   public MResponse<List<AggregateReportVO>> getBoundaryTestResult(int planId) {
     List<AggregateReportVO> resultList = pressureMeasurementService.getBoundaryTestResult(planId);
