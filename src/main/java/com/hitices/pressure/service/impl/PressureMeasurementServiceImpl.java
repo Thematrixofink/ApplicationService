@@ -549,6 +549,8 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
         plans.add(Integer.valueOf(planId));
       }
     }
-    pressureMeasurementMapper.updatePlanStatus(plans);
+    if(plans.size() != 0) {
+      pressureMeasurementMapper.updatePlanStatus(plans);
+    }
   }
 }
