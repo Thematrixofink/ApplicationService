@@ -17,8 +17,8 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="com.opensymphony.xwork2" level="WAN"/>
-        <Logger name="org.apache.struts2" level="WAN"/>
+        <Logger name="com.opensymphony.xwork2" level="WARN"/>
+        <Logger name="org.apache.struts2" level="WARN"/>
         <Root level="warn">
             <AppenderRef ref="STDOUT"/>
         </Root>

@@ -59,8 +59,11 @@ import java.util.Map;
 
 public class JMeterUtil {
 
-    public static String WINDOWS_HOME= "C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\";
-    public static String WINDOWS_FILE_PATH = "C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\bin\\jmeter.properties";
+    //todo 修改为了自己的路径
+    public static String WINDOWS_HOME= "D:\\aSoftWares\\apache-tomcat-10.1.6-windows-x64\\apache-jmeter-5.6.2";
+    public static String WINDOWS_FILE_PATH = "D:\\aSoftWares\\apache-tomcat-10.1.6-windows-x64\\apache-jmeter-5.6.2\\bin\\jmeter.properties";
+    //public static String WINDOWS_HOME= "C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\";
+    //public static String WINDOWS_FILE_PATH = "C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\bin\\jmeter.properties";
     public static String LINUX_HOME= "/opt/jmeter/";
     public static String LINUX_FILE_PATH = "/opt/jmeter/bin/jmeter.properties";
 

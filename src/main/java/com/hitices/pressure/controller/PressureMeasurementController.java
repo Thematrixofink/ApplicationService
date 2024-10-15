@@ -34,7 +34,7 @@ public class PressureMeasurementController {
     }
   }
 
-  @GetMapping("getTestPlanById")
+  @GetMapping("/getTestPlanById")
   public MResponse<TestPlanVO> getTestPlanById(@RequestParam("testPlanId") int testPlanId) {
     try {
       return new MResponse<TestPlanVO>()
