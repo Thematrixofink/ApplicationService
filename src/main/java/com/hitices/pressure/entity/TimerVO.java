@@ -31,4 +31,5 @@ public abstract class TimerVO {
     private int timerType;
 
     private int threadGroupId;
+
 }

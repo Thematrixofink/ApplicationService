@@ -6,13 +6,20 @@ import org.apache.jmeter.samplers.SampleResult;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface PressureMeasurementService {
 
+    //todo 修改了 boolean改为CompletableFuture<Boolean>
+
+    CompletableFuture<Boolean> commonMeasureFuture(TestPlanVO testPlanVO);
+
+    CompletableFuture<Boolean> boundaryMeasureFuture(TestPlanVO testPlanVO);
+
+    CompletableFuture<Boolean> measureFuture(int testPlanId);
+
     boolean commonMeasure(TestPlanVO testPlanVO);
-
     boolean boundaryMeasure(TestPlanVO testPlanVO);
-
     boolean measure(int testPlanId) throws JsonProcessingException;
 
     void addResults(SampleResult result);
@@ -50,5 +57,7 @@ public interface PressureMeasurementService {
     int[] getStartAndEndOfTest(int planId);
 
     List<AggregateReportVO> getBoundaryTestResult(int planId);
+
+
 
 }
