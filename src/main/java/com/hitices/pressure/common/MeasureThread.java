@@ -30,7 +30,8 @@ public class MeasureThread implements Runnable {
     @Override
     public void run() {
         StandardJMeterEngine standardJMeterEngine;
-        if(this.system.equals("Windows 11")) {
+        //todo 局限性略大
+        if(this.system.equals("Windows 11") || this.system.equals("Windows 10")) {
             standardJMeterEngine = JMeterUtil.init(JMeterUtil.WINDOWS_HOME, JMeterUtil.WINDOWS_FILE_PATH);
         } else {
             standardJMeterEngine = JMeterUtil.init(JMeterUtil.LINUX_HOME, JMeterUtil.LINUX_FILE_PATH);

@@ -42,6 +42,7 @@ public class BoundaryTestThread implements Runnable {
             }
 
             File jmxFile = new File(this.jmxPath);
+            //记载jmx文件，创建测试计划
             HashTree testPlanTree = SaveService.loadTree(jmxFile);
 
             standardJMeterEngine.configure(testPlanTree);

@@ -27,4 +27,12 @@ public class TestMeasureController {
 //        System.out.println("Received");
         return new MResponse<String>().successMResponse().data(System.getProperty("os.name"));
     }
+
+    @GetMapping("/count")
+    public MResponse<String> count() {
+        for(int i = 0 ; i < 10000 ; i ++){
+            i++;
+        }
+        return new MResponse<String>().successMResponse().data(System.getProperty("os.name"));
+    }
 }

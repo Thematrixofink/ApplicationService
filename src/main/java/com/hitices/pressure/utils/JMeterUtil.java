@@ -59,7 +59,7 @@ import java.util.Map;
 
 public class JMeterUtil {
 
-    //todo 修改为了自己的路径
+    //todo 路径参数化
     public static String WINDOWS_HOME= "D:\\aSoftWares\\apache-tomcat-10.1.6-windows-x64\\apache-jmeter-5.6.2";
     public static String WINDOWS_FILE_PATH = "D:\\aSoftWares\\apache-tomcat-10.1.6-windows-x64\\apache-jmeter-5.6.2\\bin\\jmeter.properties";
     //public static String WINDOWS_HOME= "C:\\Neil\\Software\\Apache\\apache-jmeter-4.0\\";
@@ -159,6 +159,7 @@ public class JMeterUtil {
         return jmxPath.toString();
     }
 
+    //将测试计划转换为jmx文件
     public static boolean transformJmx(TestPlanVO testPlanVO, String filePath) {
         try {
             File inputFile = new File(filePath);

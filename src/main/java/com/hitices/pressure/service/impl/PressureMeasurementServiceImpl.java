@@ -1,6 +1,7 @@
 package com.hitices.pressure.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,9 +46,12 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
   @Override
   public boolean commonMeasure(TestPlanVO testPlanVO) {
     try {
+      //开启一个线程来进行压力测试的执行
       MeasureThread measureThread = new MeasureThread(testPlanVO, this);
+      //todo 修改为CompletableFuture以及线程池
       Thread thread = new Thread(measureThread);
       thread.start();
+      measureThread.run();
       testPlanVO.setStatus("Running");
       pressureMeasurementMapper.updateTestPlan(testPlanVO);
       return true;
@@ -250,6 +254,11 @@ public class PressureMeasurementServiceImpl implements PressureMeasurementServic
   public boolean addAggregateReport(int planId) {
     AggregateReportVO aggregateReportVO = calculateReport(planId);
     try {
+      AggregateReportVO aggregateReport = pressureMeasurementMapper.getAggregateReport(planId);
+      //检查是否已经创建过聚合报告，只能创建一份聚合报告
+      if(ObjectUtils.isNotNull(aggregateReport) || ObjectUtils.isNotEmpty(aggregateReport)){
+        return false;
+      }
       int res = pressureMeasurementMapper.insertAggregateReport(aggregateReportVO);
       if (res <= 0) {
         return false;
