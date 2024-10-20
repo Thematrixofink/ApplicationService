@@ -1,9 +1,6 @@
-package com.hitices.pressure.entity;
+package com.hitices.pressure.domain.vo;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.Data;
 
 import java.util.Date;

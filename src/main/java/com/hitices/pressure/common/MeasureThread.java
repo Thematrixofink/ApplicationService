@@ -1,7 +1,7 @@
 package com.hitices.pressure.common;
 
-import com.hitices.pressure.entity.TestPlanVO;
-import com.hitices.pressure.entity.ThreadGroupVO;
+import com.hitices.pressure.domain.vo.TestPlanVO;
+import com.hitices.pressure.domain.vo.ThreadGroupVO;
 import com.hitices.pressure.repository.PressureMeasurementMapper;
 import com.hitices.pressure.service.PressureMeasurementService;
 import com.hitices.pressure.utils.JMeterUtil;
@@ -13,7 +13,6 @@ import org.apache.jmeter.reporters.ResultCollector;
 import org.apache.jmeter.testelement.TestPlan;
 import org.apache.jmeter.threads.ThreadGroup;
 import org.apache.jorphan.collections.HashTree;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class MeasureThread implements Runnable {
 

@@ -2,7 +2,12 @@ package com.hitices.pressure.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hitices.pressure.common.MResponse;
-import com.hitices.pressure.entity.*;
+import com.hitices.pressure.domain.vo.AggregateReportVO;
+import com.hitices.pressure.domain.vo.TestPlanVO;
+import com.hitices.pressure.domain.vo.TestResultVO;
+import com.hitices.pressure.domain.entity.HardwareRecord;
+import com.hitices.pressure.domain.entity.MonitorParam;
+import com.hitices.pressure.domain.entity.NetworkRecord;
 import com.hitices.pressure.service.PressureMeasurementService;
 import com.hitices.pressure.utils.ExcelGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +20,6 @@ import org.springframework.http.ResponseEntity;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @CrossOrigin
@@ -195,30 +198,5 @@ public class PressureMeasurementController {
   }
 
 
-  /**
-   * 执行多个测试计划并拿到性能图
-   * @param
-   * @return
-   */
-  @PostMapping("/measurePlans")
-  public MResponse<Boolean> measurePlans(@RequestBody TestPlansVO testPlanIds) {
-    List<Integer> failedTestPlanIds = new ArrayList<>();
-    List<Integer> ids = testPlanIds.getTestPlanIds();
-    //参数校验
-    if(ids.size() < 2) return new MResponse<Boolean>().failedMResponse().set("msg","至少选择两个测试计划进行联合测试!").data(false);
-    //串行执行多个测试计划
-    CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
-    for (int testPlanId : ids) {
-      future = future.thenCompose(v -> pressureMeasurementService.measureFuture(testPlanId))
-              .thenAccept(result -> {
-                if (!result) {
-                  log.info("测试计划执行失败: " + testPlanId);
-                  failedTestPlanIds.add(testPlanId);
-                }else{
-                  log.info("测试计划执行成功: " + testPlanId);
-                }
-              });
-    }
-    return new MResponse<Boolean>().successMResponse().data(true);
-  }
+
 }

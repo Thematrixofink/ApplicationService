@@ -1,14 +1,13 @@
 package com.hitices.pressure.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hitices.pressure.entity.TestPlanVO;
-import com.hitices.pressure.entity.ThreadGroupVO;
+import com.hitices.pressure.domain.vo.TestPlanVO;
+import com.hitices.pressure.domain.vo.ThreadGroupVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import com.hitices.pressure.utils.JMeterUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

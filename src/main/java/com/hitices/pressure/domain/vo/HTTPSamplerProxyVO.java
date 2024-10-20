@@ -1,4 +1,4 @@
-package com.hitices.pressure.entity;
+package com.hitices.pressure.domain.vo;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

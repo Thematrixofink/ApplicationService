@@ -2,7 +2,7 @@ package com.hitices.pressure.utils;
 
 import com.hitices.pressure.common.AggregateReport;
 import com.hitices.pressure.common.MyResultCollector;
-import com.hitices.pressure.entity.*;
+import com.hitices.pressure.domain.vo.*;
 import com.hitices.pressure.service.PressureMeasurementService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jmeter.config.Argument;

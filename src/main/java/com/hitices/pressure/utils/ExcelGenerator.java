@@ -1,7 +1,7 @@
 package com.hitices.pressure.utils;
-import com.hitices.pressure.entity.AggregateReportVO;
-import com.hitices.pressure.entity.HardwareRecord;
-import com.hitices.pressure.entity.NetworkRecord;
+import com.hitices.pressure.domain.vo.AggregateReportVO;
+import com.hitices.pressure.domain.entity.HardwareRecord;
+import com.hitices.pressure.domain.entity.NetworkRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 

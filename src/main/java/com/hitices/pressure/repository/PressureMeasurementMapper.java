@@ -1,6 +1,6 @@
 package com.hitices.pressure.repository;
 
-import com.hitices.pressure.entity.*;
+import com.hitices.pressure.domain.vo.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -76,4 +76,6 @@ public interface PressureMeasurementMapper {
     TestResultVO getTestResultByResultId(@Param("testResultId") int testResultId);
 
     int updatePlanStatus(@Param("plans") List<Integer> plans);
+
+
 }

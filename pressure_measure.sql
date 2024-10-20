@@ -239,4 +239,18 @@ CREATE TABLE `uniform_random_timer`  (
   CONSTRAINT `fk_uniform_random_timer_timer` FOREIGN KEY (`id`) REFERENCES `timer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
+DROP TABLE IF EXISTS `joint_plan`;
+CREATE TABLE `joint_plan`  (
+                              `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '测试计划id',
+                              `test_plan_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '测试计划名称',
+                              `comment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '注释',
+                              `serialized` bit(1) NOT NULL COMMENT '是否独立运行每个线程组，如在一个组运行结束后启动下一个',
+                              `functional_mode` bit(1) NOT NULL COMMENT '是否开启函数测试模式',
+                              `tear_down` bit(1) NOT NULL COMMENT '主线程结束后是否允许tear down线程组',
+                              `status` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '测试计划状态，已创建，运行中，执行完毕',
+                              `namespace` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+                              `pod_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+                              PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
 SET FOREIGN_KEY_CHECKS = 1;

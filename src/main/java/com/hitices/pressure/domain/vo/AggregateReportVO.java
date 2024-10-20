@@ -1,6 +1,5 @@
-package com.hitices.pressure.entity;
+package com.hitices.pressure.domain.vo;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
 package com.hitices.pressure.common;
 
-import com.hitices.pressure.entity.TestResultVO;
+import com.hitices.pressure.domain.vo.TestResultVO;
 import com.hitices.pressure.service.PressureMeasurementService;
 import org.apache.jmeter.reporters.ResultCollector;
 import org.apache.jmeter.reporters.Summariser;

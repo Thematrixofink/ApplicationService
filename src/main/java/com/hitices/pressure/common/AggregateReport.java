@@ -1,17 +1,12 @@
 package com.hitices.pressure.common;
 
-import com.hitices.pressure.entity.AggregateReportVO;
-import com.hitices.pressure.service.PressureMeasurementService;
-import com.hitices.pressure.service.impl.PressureMeasurementServiceImpl;
+import com.hitices.pressure.domain.vo.AggregateReportVO;
 import com.hitices.pressure.utils.JMeterUtil;
 import org.apache.jmeter.reporters.ResultCollector;
 import org.apache.jmeter.reporters.Summariser;
 import org.apache.jmeter.samplers.SampleEvent;
 import org.apache.jmeter.samplers.SampleResult;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

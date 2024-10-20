@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hitices.pressure.repository.PressureMeasurementMapper">
-    <resultMap id="AggregateReportResultMap" type="com.hitices.pressure.entity.AggregateReportVO">
+    <resultMap id="AggregateReportResultMap" type="com.hitices.pressure.domain.vo.AggregateReportVO">
         <id property="id" column="id"/>
         <result property="planId" column="plan_id"/>
         <result property="samplesNum" column="samples_num"/>
@@ -15,7 +15,7 @@
         <result property="tps" column="tps"/>
         <result property="errorRate" column="error_rate"/>
     </resultMap>
-    <resultMap id="TestPlanResultMap" type="com.hitices.pressure.entity.TestPlanVO">
+    <resultMap id="TestPlanResultMap" type="com.hitices.pressure.domain.vo.TestPlanVO">
         <id property="id" column="id"/>
         <result property="comment" column="comment"/>
         <result property="testPlanName" column="test_plan_name"/>
@@ -26,9 +26,9 @@
         <result property="namespace" column="namespace"/>
         <result property="podName" column="pod_name"/>
         <collection property="threadGroupList" column="{testPlanId = id}" javaType="List"
-                    ofType="com.hitices.pressure.entity.ThreadGroupVO" select="getThreadGroupsByTestPlanId"/>
+                    ofType="com.hitices.pressure.domain.vo.ThreadGroupVO" select="getThreadGroupsByTestPlanId"/>
     </resultMap>
-    <resultMap id="ThreadGroupResultMap" type="com.hitices.pressure.entity.ThreadGroupVO">
+    <resultMap id="ThreadGroupResultMap" type="com.hitices.pressure.domain.vo.ThreadGroupVO">
         <id property="id" column="id"/>
         <result property="threadGroupName" column="thread_group_name"/>
         <result property="comment" column="comment"/>
@@ -45,7 +45,7 @@
         <association property="httpSamplerProxyVO" column="{threadGroupId=id}"
                      select="getHTTPSamplerProxyByThreadGroupId"/>
     </resultMap>
-    <resultMap id="TestResultMap" type="com.hitices.pressure.entity.TestResultVO">
+    <resultMap id="TestResultMap" type="com.hitices.pressure.domain.vo.TestResultVO">
         <id property="id" column="id"/>
         <result property="planId" column="plan_id"/>
         <result property="timestamp" column="timestamp"/>
@@ -65,7 +65,7 @@
         <result property="bodySize" column="body_size"/>
         <result property="sentBytes" column="sent_bytes"/>
     </resultMap>
-    <resultMap id="HTTPSamplerProxyResultMap" type="com.hitices.pressure.entity.HTTPSamplerProxyVO">
+    <resultMap id="HTTPSamplerProxyResultMap" type="com.hitices.pressure.domain.vo.HTTPSamplerProxyVO">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="comment" column="comment"/>
@@ -83,14 +83,14 @@
         <result property="threadGroupId" column="thread_group_id"/>
         <result property="body" column="body"/>
     </resultMap>
-    <resultMap id="HeaderManagerResultMap" type="com.hitices.pressure.entity.HeaderManagerVO">
+    <resultMap id="HeaderManagerResultMap" type="com.hitices.pressure.domain.vo.HeaderManagerVO">
         <id property="id" column="id"/>
         <result property="threadGroupId" column="thread_group_id"/>
         <result property="headerManagerName" column="header_manager_name"/>
         <result property="comment" column="comment"/>
         <result property="headerListString" column="headers"/>
     </resultMap>
-    <resultMap id="CookieManagerResultMap" type="com.hitices.pressure.entity.CookieManagerVO">
+    <resultMap id="CookieManagerResultMap" type="com.hitices.pressure.domain.vo.CookieManagerVO">
         <id property="id" column="id"/>
         <result property="cookieManagerName" column="cookie_manager_name"/>
         <result property="comment" column="comment"/>
@@ -98,7 +98,7 @@
         <result property="clearEachIteration" column="clear_each_iteration"/>
         <result property="threadGroupId" column="thread_group_id"/>
     </resultMap>
-    <resultMap id="LoopControllerResultMap" type="com.hitices.pressure.entity.LoopControllerVO">
+    <resultMap id="LoopControllerResultMap" type="com.hitices.pressure.domain.vo.LoopControllerVO">
         <id property="id" column="id"/>
         <result property="loopControllerName" column="loop_controller_name"/>
         <result property="comment" column="comment"/>
@@ -106,7 +106,7 @@
         <result property="continueForever" column="continue_forever"/>
         <result property="threadGroupId" column="thread_group_id"/>
     </resultMap>
-    <resultMap id="TimerResultMap" type="com.hitices.pressure.entity.ConstantTimerVO">
+    <resultMap id="TimerResultMap" type="com.hitices.pressure.domain.vo.ConstantTimerVO">
         <id property="id" column="id"/>
         <result property="timerType" column="type"/>
         <result property="threadGroupId" column="thread_group_id"/>
@@ -153,22 +153,22 @@
         from timer
         where thread_group_id = #{threadGroupId}
     </select>
-    <select id="getConstantTimerById" resultType="com.hitices.pressure.entity.ConstantTimerVO">
+    <select id="getConstantTimerById" resultType="com.hitices.pressure.domain.vo.ConstantTimerVO">
         select *
         from constant_timer
         where id = #{id}
     </select>
-    <select id="getGaussianRandomTimerById" resultType="com.hitices.pressure.entity.GaussianRandomTimerVO">
+    <select id="getGaussianRandomTimerById" resultType="com.hitices.pressure.domain.vo.GaussianRandomTimerVO">
         select *
         from gaussian_random_timer
         where id = #{id}
     </select>
-    <select id="getUniformRandomTimerById" resultType="com.hitices.pressure.entity.UniformRandomTimerVO">
+    <select id="getUniformRandomTimerById" resultType="com.hitices.pressure.domain.vo.UniformRandomTimerVO">
         select *
         from uniform_random_timer
         where id = #{id}
     </select>
-    <select id="getPoissonRandomTimerById" resultType="com.hitices.pressure.entity.PoissonRandomTimerVO">
+    <select id="getPoissonRandomTimerById" resultType="com.hitices.pressure.domain.vo.PoissonRandomTimerVO">
         select *
         from poisson_random_timer
         where id = #{id}
@@ -188,13 +188,12 @@
         from test_result
         where id = #{testResultId}
     </select>
-
     <insert id="insertTestPlan" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
-            parameterType="com.hitices.pressure.entity.TestPlanVO">
+            parameterType="com.hitices.pressure.domain.vo.TestPlanVO">
         insert into test_plan value (null, #{testPlanName}, #{comment}, #{serialized},
                                      #{functionalMode}, #{tearDown}, #{status}, #{namespace}, #{podName}, #{boundary})
     </insert>
-    <insert id="insertTestResult" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.hitices.pressure.entity.TestResultVO">
+    <insert id="insertTestResult" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.hitices.pressure.domain.vo.TestResultVO">
         insert into test_result value (null, #{planId}, #{timestamp}, #{startTime}, #{endTime}, #{idleTime}, #{pauseTime}, #{connectTime}, #{latency}, #{success}, #{responseCode}, #{responseData}, #{responseMessage}, #{responseHeaders}, #{bytes}, #{headersSize}, #{bodySize}, #{sentBytes})
     </insert>
     <insert id="insertThreadGroups" useGeneratedKeys="true" keyProperty="id">
@@ -273,6 +272,7 @@
             (null, #{timer.timerType},#{timer.threadGroupId})
         </foreach>
     </insert>
+
     <delete id="deleteTestPlan">
         delete
         from test_plan
@@ -288,7 +288,7 @@
         from thread_group
         where test_plan_id = #{testPlanId};
     </delete>
-    <update id="updateTestPlan" parameterType="com.hitices.pressure.entity.TestPlanVO" keyColumn="id" keyProperty="id">
+    <update id="updateTestPlan" parameterType="com.hitices.pressure.domain.vo.TestPlanVO" keyColumn="id" keyProperty="id">
         update test_plan
         set test_plan_name  = #{testPlanName},
             comment         = #{comment},
@@ -301,7 +301,7 @@
         where id = #{id}
 
     </update>
-    <update id="updateAggregateReport" parameterType="com.hitices.pressure.entity.AggregateReportVO" keyColumn="id" keyProperty="id">
+    <update id="updateAggregateReport" parameterType="com.hitices.pressure.domain.vo.AggregateReportVO" keyColumn="id" keyProperty="id">
         update aggregate_report
         set samples_num = #{samplesNum},
             average = #{average},

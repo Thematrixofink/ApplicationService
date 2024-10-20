@@ -1,7 +1,7 @@
 package com.hitices.pressure.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hitices.pressure.entity.*;
+import com.hitices.pressure.domain.vo.*;
 import org.apache.jmeter.samplers.SampleResult;
 
 import java.io.IOException;
