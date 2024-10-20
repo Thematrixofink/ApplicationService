@@ -1,8 +1,10 @@
 package com.hitices.pressure.controller;
 
 
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.hitices.pressure.common.MResponse;
 import com.hitices.pressure.domain.entity.JointPlanMap;
+import com.hitices.pressure.domain.vo.AggregateReportVO;
 import com.hitices.pressure.domain.vo.JointPlanVO;
 import com.hitices.pressure.service.JointPlanService;
 import com.hitices.pressure.service.PressureMeasurementService;
@@ -11,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -82,6 +85,46 @@ public class JointMeasureController {
                     });
         }
         return new MResponse<Boolean>().successMResponse().data(true).set("msg","联合测试计划开始执行!");
+    }
+
+    /**
+     * 创建联合测试计划的聚合报告
+     * @param jointPlanId
+     * @return
+     */
+    @PostMapping("/createJointReportByPlanId")
+    public MResponse<Boolean> createJointReportById(int jointPlanId){
+        //参数校验
+        List<JointPlanMap> planByJointPlanId = jointPlanService.getPlanByJointPlanId(jointPlanId);
+        if(ObjectUtils.isNull(planByJointPlanId) || planByJointPlanId.size() <=1){
+            return new MResponse<Boolean>().failedMResponse().set("msg","此Id不存在!").data(false);
+        }
+        for (JointPlanMap map : planByJointPlanId) {
+            boolean b = pressureMeasurementService.addAggregateReport(map.getPlanId());
+            if(!b) throw new RuntimeException("Id:"+map.getPlanId()+"  创建聚合报告失败");
+        }
+        return new MResponse<Boolean>().successMResponse().data(true);
+    }
+
+    /**
+     * 创建联合测试计划的聚合报告
+     * @param jointPlanId
+     * @return
+     */
+    @GetMapping("/getJointReportByPlanId")
+    public MResponse<List<AggregateReportVO>> getJointReportById(int jointPlanId){
+        //参数校验
+        List<JointPlanMap> planByJointPlanId = jointPlanService.getPlanByJointPlanId(jointPlanId);
+        if(ObjectUtils.isNull(planByJointPlanId) || planByJointPlanId.size() <=1){
+            return new MResponse<List<AggregateReportVO>>().failedMResponse().set("msg","此Id不存在!").data(null);
+        }
+        List<AggregateReportVO> reports = new ArrayList<>();
+        for (JointPlanMap map : planByJointPlanId) {
+            AggregateReportVO report = pressureMeasurementService.getAggregateReportByPlanId(map.getPlanId());
+            if(ObjectUtils.isNotNull(report) && ObjectUtils.isNotEmpty(report)) reports.add(report);
+        }
+        if(reports.size() <= 0) return new MResponse<List<AggregateReportVO>>().failedMResponse().data(null).set("msg","未查询到聚合报告，请先创建!");
+        return new MResponse<List<AggregateReportVO>>().successMResponse().data(reports);
     }
 
 

@@ -19,7 +19,7 @@ public class TestMeasureController {
 //        System.out.println("Received");
         //sleep for 200ms
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
